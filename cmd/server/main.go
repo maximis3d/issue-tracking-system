@@ -1,14 +1,13 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"fmt"
+	"net/http"
+)
 
 func main() {
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
+	mux := setupRoutes()
 
-	r.Run()
+	fmt.Println("Server listening on :8080")
+	http.ListenAndServe(":8080", mux)
 }
