@@ -3,11 +3,20 @@ package main
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/maximis3d/issue-tracking-system/internal/routes"
 )
 
 func main() {
-	mux := setupRoutes()
+	router := routes.NewRouter()
 
-	fmt.Println("Server listening on :8080")
-	http.ListenAndServe(":8080", mux)
+	port := 8080
+	addr := fmt.Sprintf(":%d", port)
+
+	fmt.Printf("Server listening on http://localhost%s\n", addr)
+	err := http.ListenAndServe(addr, router)
+
+	if err != nil {
+		panic(err)
+	}
 }
