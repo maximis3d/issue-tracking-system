@@ -9,11 +9,11 @@ import (
 )
 
 type Handler struct {
-	stre types.UserStore
+	store types.UserStore
 }
 
 func NewHandler(store types.UserStore) *Handler {
-	return &Handler{ store: store}
+	return &Handler{store: store}
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
@@ -22,7 +22,8 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 }
 
 func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
-	return nil
+	// Implement handle login
+
 }
 
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
@@ -30,15 +31,11 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 
 	var payload types.RegisterUserPayload
 
-	if err := utils.ParseJson(r.Body, payload), err != nil {
+	if err := utils.ParseJSON(r, payload); err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
 	}
 	// check if user exists
-	h.store.GetUserByEmail(payload.Email)
 
-
-
-	
 	// if not, create new user
 
 }
