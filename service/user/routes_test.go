@@ -50,7 +50,7 @@ func TestUserServiceHandlers(t *testing.T) {
 	})
 }
 
-func performrequest(t *testing.T, handler *Handler, method string, path string, payload interface{}) *httptest.ResponseRecorder {
+func performrequest(t testing.TB, handler *Handler, method string, path string, payload interface{}) *httptest.ResponseRecorder {
 	t.Helper()
 
 	marshalled, err := json.Marshal(payload)
@@ -72,6 +72,10 @@ func performrequest(t *testing.T, handler *Handler, method string, path string, 
 	router.ServeHTTP(rr, req)
 
 	return rr
+}
+
+func assertCorrectMessage() error {
+	return nil
 }
 
 type mockUserStore struct{}
