@@ -29,9 +29,7 @@ func TestUserServiceHandlers(t *testing.T) {
 
 		rr := performrequest(t, handler, http.MethodGet, registerConst, payload)
 
-		if rr.Code != http.StatusBadRequest {
-			t.Errorf("expected status code %d, got %d", http.StatusBadRequest, rr.Code)
-		}
+		assertCorrectMessage(t, rr, http.StatusBadRequest)
 	})
 
 	t.Run("should correctly register the new user", func(t *testing.T) {
@@ -44,9 +42,7 @@ func TestUserServiceHandlers(t *testing.T) {
 
 		rr := performrequest(t, handler, http.MethodGet, registerConst, payload)
 
-		if rr.Code != http.StatusCreated {
-			t.Errorf("expected status code %d, got %d", http.StatusCreated, rr.Code)
-		}
+		assertCorrectMessage(t, rr, http.StatusCreated)
 	})
 }
 
@@ -74,8 +70,11 @@ func performrequest(t testing.TB, handler *Handler, method string, path string, 
 	return rr
 }
 
-func assertCorrectMessage() error {
-	return nil
+func assertCorrectMessage(t testing.TB, rr *httptest.ResponseRecorder, expectedResponseCode int) {
+	t.Helper()
+	if rr.Code != expectedResponseCode {
+		t.Errorf("expected status code %d, got %d", expectedResponseCode, rr.Code)
+	}
 }
 
 type mockUserStore struct{}
