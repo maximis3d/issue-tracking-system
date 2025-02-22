@@ -47,7 +47,7 @@ func TestUserServiceHandlers(t *testing.T) {
 		}
 	})
 
-	t.Run("should correctly regisater the user", func(t *testing.T) {
+	t.Run("should correctly register the new user", func(t *testing.T) {
 		payload := types.RegisterUserPayload{
 			FirstName: "user_first_name",
 			LastName:  "user_last_name",
