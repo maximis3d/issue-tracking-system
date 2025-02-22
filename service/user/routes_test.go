@@ -27,20 +27,7 @@ func TestUserServiceHandlers(t *testing.T) {
 			Password:  "test123",
 		}
 
-		marshalled, _ := json.Marshal(payload)
-
-		req, err := http.NewRequest(http.MethodPost, registerConst, bytes.NewBuffer(marshalled))
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		rr := httptest.NewRecorder()
-		router := mux.NewRouter()
-
-		router.HandleFunc(registerConst, handler.handleRegister)
-
-		router.ServeHTTP(rr, req)
+		rr := performrequest(t, handler, http.MethodGet, registerConst, payload)
 
 		if rr.Code != http.StatusBadRequest {
 			t.Errorf("expected status code %d, got %d", http.StatusBadRequest, rr.Code)
@@ -55,25 +42,36 @@ func TestUserServiceHandlers(t *testing.T) {
 			Password:  "test123",
 		}
 
-		marshalled, _ := json.Marshal(payload)
-
-		req, err := http.NewRequest(http.MethodPost, registerConst, bytes.NewBuffer(marshalled))
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		rr := httptest.NewRecorder()
-		router := mux.NewRouter()
-
-		router.HandleFunc(registerConst, handler.handleRegister)
-
-		router.ServeHTTP(rr, req)
+		rr := performrequest(t, handler, http.MethodGet, registerConst, payload)
 
 		if rr.Code != http.StatusCreated {
 			t.Errorf("expected status code %d, got %d", http.StatusCreated, rr.Code)
 		}
 	})
+}
+
+func performrequest(t *testing.T, handler *Handler, method string, path string, payload interface{}) *httptest.ResponseRecorder {
+	t.Helper()
+
+	marshalled, err := json.Marshal(payload)
+	if err != nil {
+		t.Fatal(err)
+
+	}
+
+	req, err := http.NewRequest(method, path, bytes.NewBuffer(marshalled))
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	router := mux.NewRouter()
+
+	router.HandleFunc(path, handler.handleRegister)
+	router.ServeHTTP(rr, req)
+
+	return rr
 }
 
 type mockUserStore struct{}
