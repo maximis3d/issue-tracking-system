@@ -24,7 +24,7 @@ func TestUserServiceHandlers(t *testing.T) {
 			FirstName: "user_first_name",
 			LastName:  "user_last_name",
 			Email:     "invalid_email",
-			Password:  "test123",
+			Password:  "",
 		}
 
 		rr := performrequest(t, handler, http.MethodGet, registerConst, payload)
@@ -72,6 +72,7 @@ func performrequest(t testing.TB, handler *Handler, method string, path string, 
 
 func assertCorrectMessage(t testing.TB, rr *httptest.ResponseRecorder, expectedResponseCode int) {
 	t.Helper()
+
 	if rr.Code != expectedResponseCode {
 		t.Errorf("expected status code %d, got %d", expectedResponseCode, rr.Code)
 	}
