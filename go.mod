@@ -1,6 +1,6 @@
 module github.com/maximis3d/issue-tracking-system
 
-go 1.23
+go 1.23.5
 
 require (
 	github.com/go-playground/validator/v10 v10.25.0
