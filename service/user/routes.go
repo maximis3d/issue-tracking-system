@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
+	"github.com/maximis3d/issue-tracking-system/config"
 	"github.com/maximis3d/issue-tracking-system/service/auth"
 	"github.com/maximis3d/issue-tracking-system/types"
 	"github.com/maximis3d/issue-tracking-system/utils"
@@ -48,8 +49,15 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("not found, invalid email or password"))
 		return
 	}
+	secret := []byte(config.Envs.JWTSecret)
+	token, err := auth.CreateJWT(secret, u.ID)
 
-	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": ""})
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": token})
 
 }
 
