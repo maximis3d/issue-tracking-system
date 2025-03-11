@@ -1,32 +1,26 @@
-# Use a Go base image
-FROM golang:1.23.5-alpine AS build
+# syntax=docker/dockerfile:1
 
-# Set the working directory inside the container
-WORKDIR /app
+# Build the application from source
+FROM golang:1.23.5 AS build-stage
+  WORKDIR /app
 
-# Copy go.mod and go.sum
-COPY ./go.mod ./go.sum ./
+  COPY go.mod go.sum ./
+  RUN go mod download
 
-# Download Go dependencies (this will create vendor dir and download dependencies based on go.mod)
-RUN go mod tidy
+  COPY . .
 
-# Copy the rest of the Go source code
-COPY . .
+  RUN CGO_ENABLED=0 GOOS=linux go build -o /api ./cmd/main.go
 
-# Build the Go app (change the entry point if needed)
-RUN go build -o /go-app ./cmd/main.go
+  # Run the tests in the container
+FROM build-stage AS run-test-stage
+  RUN go test -v ./...
 
-# Final image to run the Go app
-FROM alpine:latest
+# Deploy the application binary into a lean image
+FROM scratch AS build-release-stage
+  WORKDIR /
 
-# Set the working directory inside the container
-WORKDIR /root/
+  COPY --from=build-stage /api /api
 
-# Copy the Go app from the build stage
-COPY --from=build /go-app .
+  EXPOSE 8080
 
-# Expose the port that your API is running on
-EXPOSE 8080
-
-# Start the app
-CMD ["./go-app"]
+  ENTRYPOINT ["/api"]
