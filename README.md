@@ -3,6 +3,6 @@
 
 ## Build & Run (Docker)
 
-(Ensure docker desktop is runniing)
+(Ensure docker desktop is running)
 
 `docker compose up --build`
