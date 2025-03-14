@@ -8,10 +8,13 @@ services:
       - /app/node_modules      
     environment:
       - CHOKIDAR_USEPOLI=true
+
   db:
     image: mysql:8.0
     healthcheck:
-      test: "exit 0"
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
     volumes:
       - db_data:/var/lib/mysql
     ports:
@@ -30,14 +33,13 @@ services:
     ports:
       - "8080:8080"
     environment:
-      DB_HOST: 127.0.0.1"
+      DB_HOST: db
       DB_USER: root
       DB_PASSWORD: pass
       DB_NAME: issue_tracking_system
-    links:
-      - db
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 volumes:
-  db_data:
+  db_data: {}
