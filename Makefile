@@ -1,5 +1,5 @@
 build:
-	@go build -o bin/main cmd/main.go
+	@docker compose up --build
 
 test:
 	@go test -v ./...
