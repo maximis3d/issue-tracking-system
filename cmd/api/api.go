@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/maximis3d/issue-tracking-system/service/user"
 )
@@ -29,6 +30,13 @@ func (s *APIServer) Run() error {
 	userHandler := user.NewHandler(userStore)
 	userHandler.RegisterRoutes(subrouter)
 
+	// Enable CORS
+	corsHandler := handlers.CORS(
+		handlers.AllowedOrigins([]string{"http://localhost:5173"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),
+	)
+
 	log.Println("Listening on", s.addr)
-	return http.ListenAndServe(s.addr, router)
+	return http.ListenAndServe(s.addr, corsHandler(router))
 }
