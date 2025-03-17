@@ -1,4 +1,26 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+const registerUser = async (firstName, lastName, email, password) => {
+  try {
+    const response = await fetch("http://localhost:8080/api/v1/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ firstName, lastName, email, password }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Invalid email or password");
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+};
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
