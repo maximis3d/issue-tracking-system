@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -27,12 +28,20 @@ const Register = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const navigate = useNavigate()
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("First Name:", firstName);
-    console.log("Email:", email);
-    console.log("Password:", password);
+    setError(null);
+
+    try {
+      const _ = await registerUser(firstName, lastName, email, password);
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error:", error);
+      setError(error.message);
+    }
   };
 
   return (
@@ -45,6 +54,7 @@ const Register = () => {
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6" onSubmit={handleSubmit}>
+        {error && <p className="text-red-500 text-sm">{error}</p>}
           <div>
             <label
               htmlFor="lastName"
