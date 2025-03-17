@@ -1,13 +1,47 @@
+/* eslint-disable no-useless-catch */
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+const loginUser = async (email, password) => {
+  try {
+    const response = await fetch("http://localhost:8080/api/v1/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Invalid email or password");
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+};
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
+    setError(null);
+
+    try {
+      const data = await loginUser(email, password);
+      localStorage.setItem("token", data.token);
+      console.log("Login successful, token stored");
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error:", error);
+      setError(error.message);
+    }
   };
 
   return (
@@ -20,6 +54,8 @@ const SignIn = () => {
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6" onSubmit={handleSubmit}>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-900">
               Email address
