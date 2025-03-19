@@ -54,49 +54,25 @@ func scanRowsIntoProjects(rows *sql.Rows) (types.Project, error) {
 	return project, nil
 }
 
-func (s *Store) GetProjectByID(id int) (*types.Project, error) {
-	rows, err := s.db.Query("SELECT * from projects where id = ?", id)
-
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
+func (s *Store) GetProjectByName(name string) (*types.Project, error) {
 	project := new(types.Project)
 
-	for rows.Next() {
-		project, err = scanRowsIntoProject(rows)
-		if err != nil {
-			return nil, err
+	err := s.db.QueryRow("SELECT * FROM projects WHERE name = ?", name).
+		Scan(&project.ID, &project.Name, &project.Description, &project.ProjectLead, &project.IssueCount, &project.CreatedAt)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("project not found")
 		}
-	}
-
-	if project.ID == 0 {
-		return nil, fmt.Errorf("project not found")
-	}
-	return project, nil
-
-}
-
-func scanRowsIntoProject(rows *sql.Rows) (*types.Project, error) {
-	project := new(types.Project)
-
-	err := rows.Scan(
-		&project.ID,
-		&project.Name,
-		&project.Description,
-		&project.ProjectLead,
-		&project.IssueCount,
-		&project.CreatedAt,
-	)
-	if err != nil {
 		return nil, err
 	}
+
 	return project, nil
 }
 
 func (s *Store) CreateProject(project types.Project) error {
-	_, err := s.db.Exec("INSERT INTO projects (name, description, projectLead, issueCount), values (?,?,?,?)", project.Name, project.Description, project.ProjectLead, project.IssueCount)
+	_, err := s.db.Exec("INSERT INTO projects (name, description, project_lead) VALUES (?, ?, ?)",
+		project.Name, project.Description, project.ProjectLead)
 
 	if err != nil {
 		return err

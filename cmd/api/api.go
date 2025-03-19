@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/maximis3d/issue-tracking-system/service/project"
 	"github.com/maximis3d/issue-tracking-system/service/user"
 )
 
@@ -29,6 +30,10 @@ func (s *APIServer) Run() error {
 	userStore := user.NewStore(s.db)
 	userHandler := user.NewHandler(userStore)
 	userHandler.RegisterRoutes(subrouter)
+
+	projectStore := project.NewStore(s.db)
+	projectHandler := project.NewHandler(projectStore)
+	projectHandler.RegisterRoutes(subrouter)
 
 	// Enable CORS
 	corsHandler := handlers.CORS(

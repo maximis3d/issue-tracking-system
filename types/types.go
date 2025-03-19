@@ -38,7 +38,12 @@ type Project struct {
 }
 
 type ProjectStore interface {
-	GetProjectByID(id int) (*Project, error)
+	GetProjectByName(name string) (*Project, error)
 	GetProjects() ([]Project, error)
 	CreateProject(Project) error
+}
+type ProjectPayload struct {
+	Name        string `json:"name" validate:"required"`
+	Description string `json:"description" validate:"required"`
+	ProjectLead string `json:"projectLead" validate:"required"`
 }
