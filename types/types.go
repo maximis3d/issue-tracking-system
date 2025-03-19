@@ -27,3 +27,12 @@ type LoginUserPayload struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
 }
+
+type Project struct {
+	ID          int       `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	ProjectLead string    `json:"projectLead"`
+	IssueCount  int       `json:"issueCount"`
+	CreatedAt   time.Time `json:"createdAt"`
+}
