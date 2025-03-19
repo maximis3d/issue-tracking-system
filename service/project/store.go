@@ -94,3 +94,12 @@ func scanRowsIntoProject(rows *sql.Rows) (*types.Project, error) {
 	}
 	return project, nil
 }
+
+func (s *Store) CreateProject(project types.Project) error {
+	_, err := s.db.Exec("INSERT INTO projects (name, description, projectLead, issueCount), values (?,?,?,?)", project.Name, project.Description, project.ProjectLead, project.IssueCount)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
