@@ -36,3 +36,9 @@ type Project struct {
 	IssueCount  int       `json:"issueCount"`
 	CreatedAt   time.Time `json:"createdAt"`
 }
+
+type ProjectStore interface {
+	GetProjectByID(id int) (*Project, error)
+	GetProjects() ([]Project, error)
+	CreateProject(Project) error
+}
