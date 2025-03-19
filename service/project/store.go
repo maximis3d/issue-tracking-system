@@ -53,3 +53,44 @@ func scanRowsIntoProjects(rows *sql.Rows) (types.Project, error) {
 	}
 	return project, nil
 }
+
+func (s *Store) GetProjectByID(id int) (*types.Project, error) {
+	rows, err := s.db.Query("SELECT * from projects where id = ?", id)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	project := new(types.Project)
+
+	for rows.Next() {
+		project, err = scanRowsIntoProject(rows)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if project.ID == 0 {
+		return nil, fmt.Errorf("project not found")
+	}
+	return project, nil
+
+}
+
+func scanRowsIntoProject(rows *sql.Rows) (*types.Project, error) {
+	project := new(types.Project)
+
+	err := rows.Scan(
+		&project.ID,
+		&project.Name,
+		&project.Description,
+		&project.ProjectLead,
+		&project.IssueCount,
+		&project.CreatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return project, nil
+}
