@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS(project) (
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL,
+    `description` TEXT NOT NULL,
+    `projectLead` TEXT NOT NULL,
+    `issueCount` INT NOT NULL DEFAULT 0,
+    `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
