@@ -79,3 +79,12 @@ func (s *Store) CreateProject(project types.Project) error {
 	}
 	return nil
 }
+
+func (s *Store) CreateIssue(name types.Project) error {
+	_, err := s.db.Exec("UPDATE projects SET issueCount = issueCount + 1 WHERE project = ?", name)
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
