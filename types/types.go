@@ -47,3 +47,11 @@ type ProjectPayload struct {
 	Description string `json:"description" validate:"required"`
 	ProjectLead string `json:"projectLead" validate:"required"`
 }
+
+type Issue struct {
+	Summary     string `json:"summary" validate:"required"`
+	Description string `json:"description" validate:"required"`
+	Reporter    string `json:"reporter" validate:"required"`
+	Assignee    string `json:"assignee" validate:"required"`
+	IssueType   string `json:"issueType" validate:"required"`
+}
