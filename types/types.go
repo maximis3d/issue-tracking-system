@@ -1,6 +1,8 @@
 package types
 
-import "time"
+import (
+	"time"
+)
 
 type UserStore interface {
 	GetUserByEmail(email string) (*User, error)
@@ -51,7 +53,12 @@ type ProjectPayload struct {
 type Issue struct {
 	Summary     string `json:"summary" validate:"required"`
 	Description string `json:"description" validate:"required"`
+	Project     string `json:"project" validate:"required"`
 	Reporter    string `json:"reporter" validate:"required"`
 	Assignee    string `json:"assignee" validate:"required"`
 	IssueType   string `json:"issueType" validate:"required"`
+}
+
+type IssueStore interface {
+	CreateIssue(issue Issue) error
 }
