@@ -71,12 +71,10 @@ func (s *Store) GetProjectByName(name string) (*types.Project, error) {
 }
 
 func (s *Store) CreateProject(project types.Project) error {
-	// Check if the project lead exists
 	if !projectLeadExists(s.db, project.ProjectLead) {
 		return fmt.Errorf("project lead with id %d does not exist", project.ProjectLead)
 	}
 
-	// Insert project
 	_, err := s.db.Exec(`
         INSERT INTO projects (name, description, project_lead) VALUES (?, ?, ?)`,
 		project.Name, project.Description, project.ProjectLead,
