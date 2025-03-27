@@ -34,7 +34,7 @@ type Project struct {
 	ID          int       `json:"id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
-	ProjectLead string    `json:"projectLead"`
+	ProjectLead int       `json:"projectLead"`
 	IssueCount  int       `json:"issueCount"`
 	CreatedAt   time.Time `json:"createdAt"`
 }
@@ -47,7 +47,7 @@ type ProjectStore interface {
 type ProjectPayload struct {
 	Name        string `json:"name" validate:"required"`
 	Description string `json:"description" validate:"required"`
-	ProjectLead string `json:"projectLead" validate:"required"`
+	ProjectLead int    `json:"projectLead" validate:"required"`
 }
 
 type Issue struct {

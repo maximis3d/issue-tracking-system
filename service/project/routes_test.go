@@ -22,7 +22,7 @@ func TestProjectHandlers(t *testing.T) {
 		})
 
 		t.Run("should return list of projects", func(t *testing.T) {
-			projectStore.CreateProject(types.Project{Name: "Test Project", Description: "Test Desc", ProjectLead: "Alice"})
+			projectStore.CreateProject(types.Project{Name: "Test Project", Description: "Test Desc", ProjectLead: 1})
 			testRequest(t, handler, http.MethodGet, "/projects", nil, http.StatusOK)
 		})
 	})
@@ -44,12 +44,12 @@ func TestProjectHandlers(t *testing.T) {
 		})
 
 		t.Run("should create project successfully", func(t *testing.T) {
-			payload := types.ProjectPayload{Name: "New Project", Description: "Desc", ProjectLead: "Lead"}
+			payload := types.ProjectPayload{Name: "New Project", Description: "Desc", ProjectLead: 1}
 			testRequest(t, handler, http.MethodPost, "/projects", payload, http.StatusCreated)
 		})
 
 		t.Run("should fail if project already exists", func(t *testing.T) {
-			payload := types.ProjectPayload{Name: "New Project", Description: "Desc", ProjectLead: "Lead"}
+			payload := types.ProjectPayload{Name: "New Project", Description: "Desc", ProjectLead: 1}
 			testRequest(t, handler, http.MethodPost, "/projects", payload, http.StatusBadRequest)
 		})
 	})
