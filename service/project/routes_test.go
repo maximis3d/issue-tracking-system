@@ -55,7 +55,7 @@ func TestProjectHandlers(t *testing.T) {
 	})
 }
 
-func testRequest(t testing.TB, handler *Handler, method, path string, payload interface{}, expectedStatus int) {
+func testRequest(t testing.TB, handler *Handler, method, path string, payload any, expectedStatus int) {
 	t.Helper()
 
 	var body *bytes.Buffer

@@ -68,7 +68,7 @@ func TestUserServiceHandlers(t *testing.T) {
 }
 
 // testRequest - Helper function to perform HTTP requests and check response
-func testRequest(t testing.TB, handler *Handler, method, path string, payload interface{}, expectedStatus int) {
+func testRequest(t testing.TB, handler *Handler, method, path string, payload any, expectedStatus int) {
 	t.Helper()
 
 	marshalled, err := json.Marshal(payload)
