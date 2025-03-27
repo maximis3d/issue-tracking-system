@@ -61,6 +61,16 @@ type Issue struct {
 	UpdatedAt   time.Time `json:"updatedAt" validate:"required"`
 }
 
+type IssuePayload struct {
+	Summary     string `json:"summary" validate:"required"`
+	Description string `json:"description" validate:"required"`
+	Project     string `json:"project" validate:"required"`
+	Reporter    string `json:"reporter" validate:"required"`
+	Assignee    string `json:"assignee" validate:"required"`
+	Status      string `json:"status" validate:"required"`
+	IssueType   string `json:"issueType" validate:"required"`
+}
+
 type IssueStore interface {
 	CreateIssue(issue Issue) error
 }
