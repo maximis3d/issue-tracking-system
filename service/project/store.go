@@ -71,20 +71,27 @@ func (s *Store) GetProjectByName(name string) (*types.Project, error) {
 }
 
 func (s *Store) CreateProject(project types.Project) error {
-	_, err := s.db.Exec("INSERT INTO projects (name, description, project_lead) VALUES (?, ?, ?)",
-		project.Name, project.Description, project.ProjectLead)
+	// Check if the project lead exists
+	if !projectLeadExists(s.db, project.ProjectLead) {
+		return fmt.Errorf("project lead with id %d does not exist", project.ProjectLead)
+	}
 
+	// Insert project
+	_, err := s.db.Exec(`
+        INSERT INTO projects (name, description, project_lead) VALUES (?, ?, ?)`,
+		project.Name, project.Description, project.ProjectLead,
+	)
 	if err != nil {
-		return err
+		return fmt.Errorf("error inserting project: %w", err)
 	}
 	return nil
 }
 
-func (s *Store) CreateIssue(name types.Project) error {
-	_, err := s.db.Exec("UPDATE projects SET issueCount = issueCount + 1 WHERE project = ?", name)
+func projectLeadExists(db *sql.DB, userID int) bool {
+	var exists bool
+	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE id = ?)", userID).Scan(&exists)
 	if err != nil {
-		return err
+		return false
 	}
-	return nil
-
+	return exists
 }
