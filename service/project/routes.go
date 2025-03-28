@@ -37,7 +37,7 @@ func (h *Handler) handleGetProjects(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) handleGetProjectByName(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	name := vars["name"]
-	project, err := h.store.GetProjectByName(name)
+	project, err := h.store.GetProjectByKey(name)
 	if err != nil {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("project not found"))
 		return
@@ -58,12 +58,13 @@ func (h *Handler) handleCreateProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//check if project exits
-	_, err := h.store.GetProjectByName(project.Name)
+	_, err := h.store.GetProjectByKey(project.Name)
 	if err == nil {
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("project already exists"))
 		return
 	}
 	err = h.store.CreateProject(types.Project{
+		Key:         project.Key,
 		Name:        project.Name,
 		Description: project.Description,
 		ProjectLead: project.ProjectLead,

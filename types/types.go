@@ -32,6 +32,7 @@ type LoginUserPayload struct {
 
 type Project struct {
 	ID          int       `json:"id"`
+	Key         string    `json:"key"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	ProjectLead int       `json:"projectLead"`
@@ -40,11 +41,12 @@ type Project struct {
 }
 
 type ProjectStore interface {
-	GetProjectByName(name string) (*Project, error)
+	GetProjectByKey(name string) (*Project, error)
 	GetProjects() ([]Project, error)
 	CreateProject(Project) error
 }
 type ProjectPayload struct {
+	Key         string `json:"key" validate:"required"`
 	Name        string `json:"name" validate:"required"`
 	Description string `json:"description" validate:"required"`
 	ProjectLead int    `json:"projectLead" validate:"required"`

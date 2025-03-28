@@ -25,7 +25,7 @@ func (s *Store) CreateIssue(issue types.Issue) error {
 	issueNumber := issueCount + 1
 	issueKey := fmt.Sprintf("%s-%03d", issue.Project, issueNumber)
 
-	_, err = s.db.Exec("INSERT INTO issues (`key`, summary, description, project, reporter, assignee, status, issueType) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+	_, err = s.db.Exec("INSERT INTO issues (`key`, summary, description, project_key, reporter, assignee, status, issueType) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 		issueKey, issue.Summary, issue.Description, issue.Project, issue.Reporter, issue.Assignee, issue.Status, issue.IssueType)
 	if err != nil {
 		return err

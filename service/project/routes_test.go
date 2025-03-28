@@ -107,7 +107,7 @@ func (m *mockProjectStore) GetProjects() ([]types.Project, error) {
 	return projects, nil
 }
 
-func (m *mockProjectStore) GetProjectByName(name string) (*types.Project, error) {
+func (m *mockProjectStore) GetProjectByKey(name string) (*types.Project, error) {
 	project, exists := m.projects[name]
 	if !exists {
 		return nil, fmt.Errorf("project not found")
