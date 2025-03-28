@@ -53,6 +53,7 @@ type ProjectPayload struct {
 type Issue struct {
 	ID          int       `json:"id"`
 	Summary     string    `json:"summary" validate:"required"`
+	Key         string    `json:"key" validate:"required"`
 	Description string    `json:"description" validate:"required"`
 	Project     string    `json:"project" validate:"required"`
 	Reporter    string    `json:"reporter" validate:"required"`

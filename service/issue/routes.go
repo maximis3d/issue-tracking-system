@@ -35,7 +35,7 @@ func (h *Handler) handleCreateIssue(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := h.store.CreateIssue(types.Issue{
+	newIssue := types.Issue{
 		Summary:     issue.Summary,
 		Description: issue.Description,
 		Project:     issue.Project,
@@ -43,12 +43,16 @@ func (h *Handler) handleCreateIssue(w http.ResponseWriter, r *http.Request) {
 		Assignee:    issue.Assignee,
 		Status:      issue.Status,
 		IssueType:   issue.IssueType,
-	})
+	}
+
+	err := h.store.CreateIssue(newIssue)
 
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
-	utils.WriteJSON(w, http.StatusCreated, nil)
 
+	utils.WriteJSON(w, http.StatusCreated, map[string]string{
+		"message": "Issue created successfully",
+	})
 }
