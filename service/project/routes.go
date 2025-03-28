@@ -72,6 +72,7 @@ func (h *Handler) handleCreateProject(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
-	utils.WriteJSON(w, http.StatusCreated, nil)
+	utils.WriteJSON(w, http.StatusCreated, map[string]string{
+		"message": "Project created successfully"})
 
 }
