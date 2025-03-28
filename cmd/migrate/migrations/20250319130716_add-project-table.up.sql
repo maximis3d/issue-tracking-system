@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS projects (
     `id` INT PRIMARY KEY AUTO_INCREMENT,
-    `key` VARCHAR(255) NOT NULL UNIQUE,
+    `project_key` VARCHAR(255) NOT NULL UNIQUE,
     `name` VARCHAR(255) NOT NULL,
     `description` TEXT NOT NULL,
     `project_lead` INT UNSIGNED NULL,

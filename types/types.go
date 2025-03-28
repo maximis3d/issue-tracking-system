@@ -32,7 +32,7 @@ type LoginUserPayload struct {
 
 type Project struct {
 	ID          int       `json:"id"`
-	Key         string    `json:"key"`
+	ProjectKey  string    `json:"project_key"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	ProjectLead int       `json:"projectLead"`
@@ -46,7 +46,7 @@ type ProjectStore interface {
 	CreateProject(Project) error
 }
 type ProjectPayload struct {
-	Key         string `json:"key" validate:"required"`
+	ProjectKey  string `json:"project_key" validate:"required"`
 	Name        string `json:"name" validate:"required"`
 	Description string `json:"description" validate:"required"`
 	ProjectLead int    `json:"projectLead" validate:"required"`
@@ -57,7 +57,7 @@ type Issue struct {
 	Summary     string    `json:"summary" validate:"required"`
 	Key         string    `json:"key" validate:"required"`
 	Description string    `json:"description" validate:"required"`
-	Project     string    `json:"project" validate:"required"`
+	ProjectKey  string    `json:"project" validate:"required"`
 	Reporter    string    `json:"reporter" validate:"required"`
 	Assignee    string    `json:"assignee" validate:"required"`
 	Status      string    `json:"status" validate:"required"`
@@ -68,7 +68,7 @@ type Issue struct {
 type IssuePayload struct {
 	Summary     string `json:"summary" validate:"required"`
 	Description string `json:"description" validate:"required"`
-	Project     string `json:"project" validate:"required"`
+	ProjectKey  string `json:"project_key" validate:"required"`
 	Reporter    string `json:"reporter" validate:"required"`
 	Assignee    string `json:"assignee" validate:"required"`
 	Status      string `json:"status" validate:"required"`

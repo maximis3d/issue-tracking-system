@@ -58,7 +58,7 @@ func (s *Store) GetProjectByKey(key string) (*types.Project, error) {
 	project := new(types.Project)
 
 	err := s.db.QueryRow("SELECT * FROM projects WHERE key = ?", key).
-		Scan(&project.ID, &project.Key, &project.Name, &project.Description, &project.ProjectLead, &project.IssueCount, &project.CreatedAt)
+		Scan(&project.ID, &project.ProjectKey, &project.Name, &project.Description, &project.ProjectLead, &project.IssueCount, &project.CreatedAt)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -76,8 +76,8 @@ func (s *Store) CreateProject(project types.Project) error {
 	}
 
 	_, err := s.db.Exec(`
-        INSERT INTO projects (key, name, description, project_lead) VALUES (?, ?, ?, ?)`,
-		project.Key, project.Name, project.Description, project.ProjectLead,
+        INSERT INTO projects (project_key, name, description, project_lead) VALUES (?, ?, ?, ?)`,
+		project.ProjectKey, project.Name, project.Description, project.ProjectLead,
 	)
 	if err != nil {
 		return fmt.Errorf("error inserting project: %w", err)

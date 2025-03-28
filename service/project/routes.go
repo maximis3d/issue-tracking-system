@@ -64,7 +64,7 @@ func (h *Handler) handleCreateProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	err = h.store.CreateProject(types.Project{
-		Key:         project.Key,
+		ProjectKey:  project.ProjectKey,
 		Name:        project.Name,
 		Description: project.Description,
 		ProjectLead: project.ProjectLead,

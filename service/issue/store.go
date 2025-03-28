@@ -17,16 +17,16 @@ func NewStore(db *sql.DB) *Store {
 
 func (s *Store) CreateIssue(issue types.Issue) error {
 	var issueCount int
-	err := s.db.QueryRow("SELECT COUNT(*) FROM issues WHERE project = ?", issue.Project).Scan(&issueCount)
+	err := s.db.QueryRow("SELECT COUNT(*) FROM issues WHERE project_key = ?", issue.ProjectKey).Scan(&issueCount)
 	if err != nil {
 		return err
 	}
 
 	issueNumber := issueCount + 1
-	issueKey := fmt.Sprintf("%s-%03d", issue.Project, issueNumber)
+	issueKey := fmt.Sprintf("%s-%03d", issue.ProjectKey, issueNumber)
 
 	_, err = s.db.Exec("INSERT INTO issues (`key`, summary, description, project_key, reporter, assignee, status, issueType) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-		issueKey, issue.Summary, issue.Description, issue.Project, issue.Reporter, issue.Assignee, issue.Status, issue.IssueType)
+		issueKey, issue.Summary, issue.Description, issue.ProjectKey, issue.Reporter, issue.Assignee, issue.Status, issue.IssueType)
 	if err != nil {
 		return err
 	}

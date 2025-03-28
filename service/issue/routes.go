@@ -38,7 +38,7 @@ func (h *Handler) handleCreateIssue(w http.ResponseWriter, r *http.Request) {
 	newIssue := types.Issue{
 		Summary:     issue.Summary,
 		Description: issue.Description,
-		Project:     issue.Project,
+		ProjectKey:  issue.ProjectKey,
 		Reporter:    issue.Reporter,
 		Assignee:    issue.Assignee,
 		Status:      issue.Status,
