@@ -13,6 +13,8 @@ import (
 	"github.com/maximis3d/issue-tracking-system/types"
 )
 
+const createIssueEndpoint = "/createIssue"
+
 func TestIssueServiceHandlers(t *testing.T) {
 	t.Run("Issue Creation", func(t *testing.T) {
 		issueStore := newMockIssueStore()
@@ -28,7 +30,7 @@ func TestIssueServiceHandlers(t *testing.T) {
 				Assignee:    "assignee",
 				Status:      "status",
 			}
-			testRequest(t, handler, http.MethodPost, "/createIssue", payload, http.StatusBadRequest)
+			testRequest(t, handler, http.MethodPost, createIssueEndpoint, payload, http.StatusBadRequest)
 		})
 
 		t.Run("should create a new issue successfully", func(t *testing.T) {
@@ -41,7 +43,7 @@ func TestIssueServiceHandlers(t *testing.T) {
 				Assignee:    "assignee",
 				Status:      "status",
 			}
-			testRequest(t, handler, http.MethodPost, "/createIssue", payload, http.StatusCreated)
+			testRequest(t, handler, http.MethodPost, createIssueEndpoint, payload, http.StatusCreated)
 		})
 
 		t.Run("should fail if issue already exists", func(t *testing.T) {
@@ -54,7 +56,7 @@ func TestIssueServiceHandlers(t *testing.T) {
 				Assignee:    "assignee",
 				Status:      "status",
 			}
-			testRequest(t, handler, http.MethodPost, "/createIssue", payload, http.StatusBadRequest)
+			testRequest(t, handler, http.MethodPost, createIssueEndpoint, payload, http.StatusBadRequest)
 		})
 	})
 }
@@ -75,7 +77,7 @@ func testRequest(t testing.TB, handler *Handler, method, path string, payload an
 
 	rr := httptest.NewRecorder()
 	router := mux.NewRouter()
-	router.HandleFunc("/createIssue", handler.handleCreateIssue).Methods("POST")
+	router.HandleFunc(createIssueEndpoint, handler.handleCreateIssue).Methods("POST")
 	router.ServeHTTP(rr, req)
 
 	if rr.Code != expectedStatus {
