@@ -74,7 +74,18 @@ type IssuePayload struct {
 	Status      string `json:"status" validate:"required"`
 	IssueType   string `json:"issueType" validate:"required"`
 }
+type IssueUpdatePayload struct {
+	Summary     *string `json:"summary,omitempty"`
+	Description *string `json:"description,omitempty"`
+	ProjectKey  *string `json:"project_key,omitempty"`
+	Reporter    *string `json:"reporter,omitempty"`
+	Assignee    *string `json:"assignee,omitempty"`
+	Status      *string `json:"status,omitempty"`
+	IssueType   *string `json:"issueType,omitempty"`
+}
 
 type IssueStore interface {
 	CreateIssue(issue Issue) error
+	UpdateIssue(issue Issue) error
+	GetIssueByID(id int) (*Issue, error)
 }
