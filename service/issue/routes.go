@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
@@ -62,56 +61,48 @@ func (h *Handler) handleCreateIssue(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handleUpdateIssue(w http.ResponseWriter, r *http.Request) {
-	var payload types.IssueUpdatePayload
-	if err := utils.ParseJSON(r, &payload); err != nil {
+	var issue types.Issue
+
+	if err := utils.ParseJSON(r, &issue); err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
+		fmt.Println("Error parsing JSON:", err)
+		return
+	}
+
+	if err := utils.Validate.Struct(issue); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
+		fmt.Println("Validation errors:", errors)
 		return
 	}
 
 	vars := mux.Vars(r)
-	issueID, err := strconv.Atoi(vars["id"])
-	fmt.Println("Extracted issue ID:", issueID)
+	id := vars["id"]
+	issueID, err := strconv.Atoi(id)
 	if err != nil {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid issue ID"))
+		fmt.Println("Error converting ID:", err)
+		http.Error(w, "Invalid issue ID", http.StatusBadRequest)
 		return
 	}
 
 	existingIssue, err := h.store.GetIssueByID(issueID)
 	if err != nil {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("issue not found"))
+		fmt.Println(err)
 		return
 	}
 
-	if payload.Summary != nil {
-		existingIssue.Summary = *payload.Summary
-	}
-	if payload.Description != nil {
-		existingIssue.Description = *payload.Description
-	}
-	if payload.ProjectKey != nil {
-		existingIssue.ProjectKey = *payload.ProjectKey
-	}
-	if payload.Reporter != nil {
-		existingIssue.Reporter = *payload.Reporter
-	}
-	if payload.Assignee != nil {
-		existingIssue.Assignee = *payload.Assignee
-	}
-	if payload.Status != nil {
-		existingIssue.Status = *payload.Status
-	}
-	if payload.IssueType != nil {
-		existingIssue.IssueType = *payload.IssueType
-	}
+	issue.ID = existingIssue.ID
 
-	existingIssue.UpdatedAt = time.Now()
-
-	if err := h.store.UpdateIssue(*existingIssue); err != nil {
+	if err := h.store.UpdateIssue(issue); err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to update issue"))
+		fmt.Println(err)
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, map[string]string{
+	utils.WriteJSON(w, http.StatusOK, map[string]interface{}{
 		"message": "Issue updated successfully",
+		"issue":   issue,
 	})
+
 }
