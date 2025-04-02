@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/maximis3d/issue-tracking-system/service/issue"
 	"github.com/maximis3d/issue-tracking-system/service/project"
+	"github.com/maximis3d/issue-tracking-system/service/standups"
 	"github.com/maximis3d/issue-tracking-system/service/user"
 )
 
@@ -39,6 +40,10 @@ func (s *APIServer) Run() error {
 	issueStore := issue.NewStore(s.db)
 	issueHandler := issue.NewHandler(issueStore)
 	issueHandler.RegisterRoutes(subrouter)
+
+	standupStore := standups.NewStore(s.db)
+	standupHandler := standups.NewHandler(standupStore)
+	standupHandler.RegisterRoutes(subrouter)
 
 	// Enable CORS
 	corsHandler := handlers.CORS(
