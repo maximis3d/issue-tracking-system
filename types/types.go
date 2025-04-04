@@ -100,4 +100,5 @@ type Standup struct {
 
 type StandupStore interface {
 	CreateStandup(Standup) error
+	EndCurrentStandUp(Standup) error
 }

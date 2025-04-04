@@ -25,3 +25,17 @@ func (s *Store) CreateStandup(standup types.Standup) error {
 	}
 	return nil
 }
+
+func (s *Store) EndCurrentStandUp(standup types.Standup) error {
+	_, err := s.db.Exec(`
+	UPDATE standups
+	SET end_time = NOW()
+	WHERE project_key = ? AND end_time IS NULL
+	ORDER BY start_time DESC
+	LIMIT 1`, standup.ProjectKey)
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
