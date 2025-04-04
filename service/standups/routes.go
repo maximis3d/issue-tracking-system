@@ -36,6 +36,18 @@ func (h *Handler) handleCreateStandup(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
 	}
 
+	existingStandup, err := h.store.GetActiveStandup(standup)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to check for active standup: %v", err))
+		return
+	}
+
+	if existingStandup != nil {
+		utils.WriteError(w, http.StatusConflict, fmt.Errorf("an active standup already exists: %v", standup.ProjectKey))
+		return
+	}
+
 	newStandup := types.Standup{
 		ProjectKey: standup.ProjectKey,
 	}

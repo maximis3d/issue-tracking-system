@@ -39,3 +39,21 @@ func (s *Store) EndCurrentStandUp(standup types.Standup) error {
 	}
 	return nil
 }
+
+func (s *Store) GetActiveStandup(standup types.Standup) (*types.Standup, error) {
+	row := s.db.QueryRow(`
+		SELECT id, project_key, start_time, end_time, created_at 
+		FROM standups 
+		WHERE project_key = ? AND end_time IS NULL 
+		ORDER BY start_time DESC 
+		LIMIT 1
+	`, standup.ProjectKey)
+
+	err := row.Scan(&standup.ID, &standup.ProjectKey, &standup.StartTime, &standup.EndTime, &standup.CreatedAt)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+	return &standup, nil
+}

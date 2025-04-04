@@ -91,14 +91,15 @@ type IssueStore interface {
 }
 
 type Standup struct {
-	ID         int       `json:"id"`
-	ProjectKey string    `json:"project_key" validate:"required"`
-	StartTime  time.Time `json:"start_time"`
-	EndTime    time.Time `json:"end_time"`
-	CreatedAt  time.Time `json:"created_at"`
+	ID         int        `json:"id"`
+	ProjectKey string     `json:"project_key" validate:"required"`
+	StartTime  time.Time  `json:"start_time"`
+	EndTime    *time.Time `json:"end_time"`
+	CreatedAt  time.Time  `json:"created_at"`
 }
 
 type StandupStore interface {
 	CreateStandup(Standup) error
 	EndCurrentStandUp(Standup) error
+	GetActiveStandup(Standup) (*Standup, error)
 }
