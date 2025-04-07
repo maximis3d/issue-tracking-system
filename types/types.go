@@ -102,4 +102,5 @@ type StandupStore interface {
 	CreateStandup(Standup) error
 	EndCurrentStandUp(Standup) error
 	GetActiveStandup(Standup) (*Standup, error)
+	FilterTickets(Project) ([]Issue, error)
 }

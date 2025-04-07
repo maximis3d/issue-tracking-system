@@ -21,6 +21,7 @@ func NewHandler(store types.StandupStore) *Handler {
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/standups/start", h.handleCreateStandup).Methods("POST")
 	router.HandleFunc("/standups/end", h.handleEndStandUp).Methods("POST")
+	router.HandleFunc("/filter-issues", h.handleIssueFiltering).Methods("GET")
 }
 
 func (h *Handler) handleCreateStandup(w http.ResponseWriter, r *http.Request) {
@@ -84,4 +85,29 @@ func (h *Handler) handleEndStandUp(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, map[string]string{
 		"message": "Standup ended succesfully",
 	})
+
+}
+
+func (h *Handler) handleIssueFiltering(w http.ResponseWriter, r *http.Request) {
+	var project types.Project
+
+	if err := utils.ParseJSON(r, &project); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if project.ProjectKey == "" {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing project_key from request body"))
+		return
+
+	}
+
+	issues, err := h.store.FilterTickets(project)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, issues)
 }
