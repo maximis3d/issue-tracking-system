@@ -20,7 +20,7 @@ func (s *Store) CreateIssue(issue types.Issue) error {
 	var issueCount int
 	err := s.db.QueryRow("SELECT COUNT(*) FROM issues WHERE project_key = ?", issue.ProjectKey).Scan(&issueCount)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get issue count: %v", err)
 	}
 
 	issueNumber := issueCount + 1
@@ -29,13 +29,44 @@ func (s *Store) CreateIssue(issue types.Issue) error {
 	_, err = s.db.Exec("INSERT INTO issues (`key`, summary, description, project_key, reporter, assignee, status, issueType) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 		issueKey, issue.Summary, issue.Description, issue.ProjectKey, issue.Reporter, issue.Assignee, issue.Status, issue.IssueType)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to insert issue: %v", err)
+	}
+
+	_, err = s.db.Exec("UPDATE projects SET issue_count = issue_count + 1 WHERE project_key = ?", issue.ProjectKey)
+	if err != nil {
+		return fmt.Errorf("failed to increment issue count: %v", err)
 	}
 
 	return nil
 }
+
 func (s *Store) UpdateIssue(issue types.Issue) error {
-	_, err := s.db.Exec(`
+	var currentStatus string
+	err := s.db.QueryRow("SELECT status FROM issues WHERE id = ?", issue.ID).Scan(&currentStatus)
+	if err != nil {
+		return fmt.Errorf("failed to fetch current issue status: %v", err)
+	}
+
+	if issue.Status == "in_progress" && currentStatus != "in_progress" {
+		var wipLimit int
+		var inProgressCount int
+
+		err = s.db.QueryRow("SELECT wip_limit FROM projects WHERE project_key = ?", issue.ProjectKey).Scan(&wipLimit)
+		if err != nil {
+			return fmt.Errorf("failed to fetch WIP limit: %v", err)
+		}
+
+		err = s.db.QueryRow("SELECT COUNT(*) FROM issues WHERE project_key = ? AND status = 'in_progress'", issue.ProjectKey).Scan(&inProgressCount)
+		if err != nil {
+			return fmt.Errorf("failed to fetch in-progress issues count: %v", err)
+		}
+
+		if inProgressCount >= wipLimit {
+			return fmt.Errorf("too many issues in progress, the WIP limit is %d", wipLimit)
+		}
+	}
+
+	_, err = s.db.Exec(`
 		UPDATE issues 
 		SET summary = ?, description = ?, project_key = ?, reporter = ?, assignee = ?, status = ?, issueType = ?, updatedAt = NOW()
 		WHERE id = ?`,
@@ -44,6 +75,7 @@ func (s *Store) UpdateIssue(issue types.Issue) error {
 	if err != nil {
 		return fmt.Errorf("failed to update issue: %v", err)
 	}
+
 	return nil
 }
 

@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS projects (
     `description` TEXT NOT NULL,
     `project_lead` INT UNSIGNED NULL,
     `issue_count` INT NOT NULL DEFAULT 0,
+    `wip_limit` INT NOT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (`project_lead`) REFERENCES `users`(`id`) ON DELETE SET NULL
 );

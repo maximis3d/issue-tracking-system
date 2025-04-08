@@ -76,8 +76,8 @@ func (s *Store) CreateProject(project types.Project) error {
 	}
 
 	_, err := s.db.Exec(`
-        INSERT INTO projects (project_key, name, description, project_lead) VALUES (?, ?, ?, ?)`,
-		project.ProjectKey, project.Name, project.Description, project.ProjectLead,
+        INSERT INTO projects (project_key, name, description, project_lead, wip_limit) VALUES (?, ?, ?, ?, ?)`,
+		project.ProjectKey, project.Name, project.Description, project.ProjectLead, project.WIPLimit,
 	)
 	if err != nil {
 		return fmt.Errorf("error inserting project: %w", err)

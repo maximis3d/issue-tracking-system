@@ -68,6 +68,7 @@ func (h *Handler) handleCreateProject(w http.ResponseWriter, r *http.Request) {
 		Name:        project.Name,
 		Description: project.Description,
 		ProjectLead: project.ProjectLead,
+		WIPLimit:    project.WIPLimit,
 	})
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)

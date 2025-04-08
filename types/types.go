@@ -37,6 +37,7 @@ type Project struct {
 	Description string    `json:"description"`
 	ProjectLead int       `json:"projectLead"`
 	IssueCount  int       `json:"issueCount"`
+	WIPLimit    int       `json:"wip_limit"`
 	CreatedAt   time.Time `json:"createdAt"`
 }
 
@@ -50,6 +51,7 @@ type ProjectPayload struct {
 	Name        string `json:"name" validate:"required"`
 	Description string `json:"description" validate:"required"`
 	ProjectLead int    `json:"projectLead" validate:"required"`
+	WIPLimit    int    `json:"wip_limit" validate:"required"`
 }
 
 type Issue struct {
