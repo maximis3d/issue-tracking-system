@@ -75,6 +75,7 @@ func (h *Handler) handleCreateProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	utils.WriteJSON(w, http.StatusCreated, map[string]string{
-		"message": "Project created successfully"})
+		"message": "Project created successfully",
+	})
 
 }
