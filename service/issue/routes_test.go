@@ -28,7 +28,7 @@ func TestIssueServiceHandlers(t *testing.T) {
 		})
 
 		t.Run("should create a new issue successfully", func(t *testing.T) {
-			payload := types.IssuePayload{
+			payload := types.Issue{
 				Summary:     "summary",
 				Description: "description",
 				ProjectKey:  "project",
@@ -41,7 +41,7 @@ func TestIssueServiceHandlers(t *testing.T) {
 		})
 
 		t.Run("should fail if issue already exists", func(t *testing.T) {
-			payload := types.IssuePayload{
+			payload := types.Issue{
 				Summary:     "summary",
 				Description: "description",
 				ProjectKey:  "project",
