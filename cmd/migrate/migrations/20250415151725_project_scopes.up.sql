@@ -1,7 +1,7 @@
-CREATE TABLE IF NOT EXISTS projects_scopes (
-    `scope_id` INT UNSIGNED NOT NULL,
-    `project_id` INT UNSIGNED NOT NULL,
-    PRIMARY KEY (`scope_id`, `project_id`),
-    FOREIGN KEY (`scope_id`) REFERENCES `scopes`(`id`) ON DELETE CASCADE,
-    FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON DELETE CASCADE
+CREATE TABLE IF NOT EXISTS project_scope (
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `project_key` VARCHAR(255) NOT NULL,
+    `scope_id` INT NOT NULL,
+    FOREIGN KEY (`project_key`) REFERENCES `projects`(`project_key`) ON DELETE CASCADE,
+    FOREIGN KEY (`scope_id`) REFERENCES `scopes`(`id`) ON DELETE CASCADE
 );
