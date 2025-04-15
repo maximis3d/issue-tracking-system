@@ -22,6 +22,7 @@ func NewHandler(store types.ScopeStore) *Handler {
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/scopes", h.handleCreateScope).Methods("POST")
 	router.HandleFunc("/scopes/{id}", h.handleAddProject).Methods("POST")
+	router.HandleFunc("/scopes/issues/{id}", h.handleGetIssuesByScope).Methods("GET")
 
 }
 
@@ -55,7 +56,6 @@ func (h *Handler) handleAddProject(w http.ResponseWriter, r *http.Request) {
 
 	if err := utils.ParseJSON(r, &payload); err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
-		fmt.Println("Error parsing JSON:", err)
 		return
 	}
 
@@ -84,4 +84,21 @@ func (h *Handler) handleAddProject(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, map[string]string{
 		"message": "project added to scope successfully",
 	})
+}
+
+func (h *Handler) handleGetIssuesByScope(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	id := vars["id"]
+	scopeId, err := strconv.Atoi(id)
+
+	issues, err := h.store.GetIssuesByScope(scopeId)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("cannot retrive issues %v", err))
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, issues)
+
 }

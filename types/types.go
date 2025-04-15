@@ -55,16 +55,17 @@ type ProjectPayload struct {
 }
 
 type Issue struct {
-	ID          int       `json:"id"`
-	Summary     string    `json:"summary" validate:"required"`
-	Key         string    `json:"key" validate:"required"`
-	Description string    `json:"description" validate:"required"`
-	ProjectKey  string    `json:"project" validate:"required"`
-	Reporter    string    `json:"reporter" validate:"required"`
-	Assignee    string    `json:"assignee" validate:"required"`
-	Status      string    `json:"status" validate:"required"`
-	IssueType   string    `json:"issueType" validate:"required"`
-	UpdatedAt   time.Time `json:"updatedAt" validate:"required"`
+	ID          int    `json:"id"`
+	Summary     string `json:"summary" validate:"required"`
+	Key         string `json:"key" validate:"required"`
+	Description string `json:"description" validate:"required"`
+	ProjectKey  string `json:"project" validate:"required"`
+	Reporter    string `json:"reporter" validate:"required"`
+	Assignee    string `json:"assignee" validate:"required"`
+	Status      string `json:"status" validate:"required"`
+	IssueType   string `json:"issueType" validate:"required"`
+
+	UpdatedAt time.Time `json:"updatedAt" validate:"required"`
 }
 
 type IssuePayload struct {
@@ -117,4 +118,5 @@ type Scope struct {
 type ScopeStore interface {
 	CreateScope(Scope) error
 	AddProjectToScope(scopeID int, projectKey string) error
+	GetIssuesByScope(scopeID int) ([]Issue, error)
 }

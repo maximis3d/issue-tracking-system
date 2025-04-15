@@ -62,3 +62,31 @@ func (s *Store) AddProjectToScope(scopeID int, projectKey string) error {
 	}
 	return nil
 }
+
+func (s *Store) GetIssuesByScope(scopeID int) ([]types.Issue, error) {
+	rows, err := s.db.Query(`
+		SELECT i.id, i.key, i.summary, i.description, i.project_key, i.reporter, i.assignee, i.status, i.issueType, i.updatedAt
+		FROM issues i
+		JOIN project_scope sp ON sp.project_key = i.project_key
+		WHERE sp.scope_id = ?`, scopeID)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve issues: %v", err)
+	}
+	defer rows.Close()
+
+	var issues []types.Issue
+	for rows.Next() {
+		var issue types.Issue
+		if err := rows.Scan(&issue.ID, &issue.Key, &issue.Summary, &issue.Description, &issue.ProjectKey, &issue.Reporter, &issue.Assignee, &issue.Status, &issue.IssueType, &issue.UpdatedAt); err != nil {
+			return nil, fmt.Errorf("failed to scan issue: %v", err)
+		}
+		issues = append(issues, issue)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("row iteration error: %v", err)
+	}
+
+	return issues, nil
+}
