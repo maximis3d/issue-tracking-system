@@ -106,3 +106,15 @@ type StandupStore interface {
 	GetActiveStandup(Standup) (*Standup, error)
 	FilterTickets(Project) ([]Issue, error)
 }
+
+type Scope struct {
+	ID          int      `json:"id"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Projects    []string `json:"projects"`
+}
+
+type ScopeStore interface {
+	CreateScope(Scope) error
+	AddProjectToScope(scopeID int, projectKey string) error
+}
