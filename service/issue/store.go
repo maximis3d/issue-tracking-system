@@ -105,3 +105,39 @@ func (s *Store) GetIssueByID(id int) (*types.Issue, error) {
 
 	return i, nil
 }
+
+func (s *Store) GetIssuesByProject(projectKey string) ([]types.Issue, error) {
+	rows, err := s.db.Query("SELECT id, `key`, summary, description, project_key, reporter, assignee, status, issueType, updatedAt FROM issues WHERE project_key=?", projectKey)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query issues: %v", err)
+	}
+	defer rows.Close()
+
+	var issues []types.Issue
+
+	for rows.Next() {
+		var i types.Issue
+		err := rows.Scan(
+			&i.ID,
+			&i.Key,
+			&i.Summary,
+			&i.Description,
+			&i.ProjectKey,
+			&i.Reporter,
+			&i.Assignee,
+			&i.Status,
+			&i.IssueType,
+			&i.UpdatedAt,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan issue row: %v", err)
+		}
+		issues = append(issues, i)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error after iterating rows: %v", err)
+	}
+
+	return issues, nil
+}

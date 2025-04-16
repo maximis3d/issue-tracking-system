@@ -1,6 +1,8 @@
 package issue
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -22,6 +24,7 @@ func NewHandler(store types.IssueStore) *Handler {
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/createIssue", h.handleCreateIssue).Methods("POST")
 	router.HandleFunc("/issues/{id}", h.handleUpdateIssue).Methods("PUT")
+	router.HandleFunc("/issues/{projectKey}", h.handleGetIssuesByProject).Methods("GET")
 
 }
 
@@ -105,4 +108,32 @@ func (h *Handler) handleUpdateIssue(w http.ResponseWriter, r *http.Request) {
 		"issue":   issue,
 	})
 
+}
+
+func (h *Handler) handleGetIssuesByProject(w http.ResponseWriter, r *http.Request) {
+	// Extract the project key from URL parameters
+	vars := mux.Vars(r)
+	projectKey := vars["projectKey"]
+
+	// Fetch the issues for the given project from the store
+	issues, err := h.store.GetIssuesByProject(projectKey)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			// No issues found for the provided project key
+			utils.WriteError(w, http.StatusNotFound, fmt.Errorf("no issues found for project %s", projectKey))
+			fmt.Println("No issues found for project:", projectKey)
+		} else {
+			// An error occurred while fetching the issues
+			utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to fetch issues for project %s: %v", projectKey, err))
+			fmt.Println("Error fetching issues for project:", projectKey, err)
+		}
+		return
+	}
+
+	// Return the issues in a JSON response
+	utils.WriteJSON(w, http.StatusOK, map[string]interface{}{
+		"message":    "Issues fetched successfully",
+		"projectKey": projectKey,
+		"issues":     issues,
+	})
 }

@@ -91,6 +91,7 @@ type IssueStore interface {
 	CreateIssue(issue Issue) error
 	UpdateIssue(issue Issue) error
 	GetIssueByID(id int) (*Issue, error)
+	GetIssuesByProject(projectKey string) ([]Issue, error)
 }
 
 type Standup struct {

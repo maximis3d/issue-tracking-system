@@ -41,7 +41,19 @@ func TestIssueServiceHandlers(t *testing.T) {
 		})
 
 		t.Run("should fail if issue already exists", func(t *testing.T) {
+			// Create a mock issue first
+			issueStore.CreateIssue(types.Issue{
+				ID:          1,
+				Summary:     "summary",
+				Description: "description",
+				ProjectKey:  "project",
+				Reporter:    "reporter",
+				Assignee:    "assignee",
+				Status:      "status",
+				IssueType:   "bug",
+			})
 			payload := types.Issue{
+				ID:          1,
 				Summary:     "summary",
 				Description: "description",
 				ProjectKey:  "project",
@@ -95,23 +107,27 @@ func strPtr(s string) *string {
 func testRequest(t testing.TB, handler *Handler, method, path string, payload any, expectedStatus int) {
 	t.Helper()
 
+	// Marshal payload into JSON
 	marshalled, err := json.Marshal(payload)
 	if err != nil {
 		t.Fatal(err)
 	}
 
+	// Create the HTTP request
 	req, err := http.NewRequest(method, path, bytes.NewBuffer(marshalled))
 	if err != nil {
 		t.Fatal(err)
 	}
 	req.Header.Set("Content-Type", "application/json")
 
+	// Create a new recorder and set up the router
 	rr := httptest.NewRecorder()
 	router := mux.NewRouter()
 	router.HandleFunc(createIssueEndpoint, handler.handleCreateIssue).Methods("POST")
 	router.HandleFunc(updateIssueEndpoint, handler.handleUpdateIssue).Methods("PUT")
 	router.ServeHTTP(rr, req)
 
+	// Assert the status code
 	if rr.Code != expectedStatus {
 		t.Errorf("expected status %d, got %d", expectedStatus, rr.Code)
 	}
@@ -149,4 +165,17 @@ func (m *mockIssueStore) UpdateIssue(issue types.Issue) error {
 	}
 	m.issues[issue.ID] = issue
 	return nil
+}
+
+func (m *mockIssueStore) GetIssuesByProject(projectKey string) ([]types.Issue, error) {
+	var result []types.Issue
+	for _, issue := range m.issues {
+		if issue.ProjectKey == projectKey {
+			result = append(result, issue)
+		}
+	}
+	if len(result) == 0 {
+		return nil, fmt.Errorf("no issues found for project %s", projectKey)
+	}
+	return result, nil
 }
