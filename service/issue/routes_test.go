@@ -41,19 +41,7 @@ func TestIssueServiceHandlers(t *testing.T) {
 		})
 
 		t.Run("should fail if issue already exists", func(t *testing.T) {
-			// Create a mock issue first
-			issueStore.CreateIssue(types.Issue{
-				ID:          1,
-				Summary:     "summary",
-				Description: "description",
-				ProjectKey:  "project",
-				Reporter:    "reporter",
-				Assignee:    "assignee",
-				Status:      "status",
-				IssueType:   "bug",
-			})
 			payload := types.Issue{
-				ID:          1,
 				Summary:     "summary",
 				Description: "description",
 				ProjectKey:  "project",
