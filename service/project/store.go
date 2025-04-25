@@ -60,8 +60,19 @@ func scanRowsIntoProjects(rows *sql.Rows) (types.Project, error) {
 func (s *Store) GetProjectByKey(key string) (*types.Project, error) {
 	project := new(types.Project)
 
-	err := s.db.QueryRow("SELECT * FROM projects WHERE key = ?", key).
-		Scan(&project.ID, &project.ProjectKey, &project.Name, &project.Description, &project.ProjectLead, &project.IssueCount, &project.CreatedAt)
+	err := s.db.QueryRow(`
+        SELECT id, project_key, name, description, project_lead, issue_count, created_at
+        FROM projects
+        WHERE project_key = ?`, key).
+		Scan(
+			&project.ID,
+			&project.ProjectKey,
+			&project.Name,
+			&project.Description,
+			&project.ProjectLead,
+			&project.IssueCount,
+			&project.CreatedAt,
+		)
 
 	if err != nil {
 		if err == sql.ErrNoRows {

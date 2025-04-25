@@ -24,7 +24,7 @@ func NewHandler(store types.IssueStore) *Handler {
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/createIssue", h.handleCreateIssue).Methods("POST")
 	router.HandleFunc("/issues/{id}", h.handleUpdateIssue).Methods("PUT")
-	router.HandleFunc("/issues/{projectKey}", h.handleGetIssuesByProject).Methods("GET")
+	router.HandleFunc("/issues/{key}", h.handleGetIssuesByProject).Methods("GET")
 
 }
 
@@ -113,7 +113,7 @@ func (h *Handler) handleUpdateIssue(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) handleGetIssuesByProject(w http.ResponseWriter, r *http.Request) {
 	// Extract the project key from URL parameters
 	vars := mux.Vars(r)
-	projectKey := vars["projectKey"]
+	projectKey := vars["key"]
 
 	// Fetch the issues for the given project from the store
 	issues, err := h.store.GetIssuesByProject(projectKey)

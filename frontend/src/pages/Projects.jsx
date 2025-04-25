@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-
+import { useNavigate } from "react-router-dom"; // Import this
 const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true); 
-  const [error, setError] = useState(null); 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  const navigate = useNavigate()
   useEffect(() => {
     fetch("http://localhost:8080/api/v1/projects")
       .then((res) => {
@@ -15,12 +16,12 @@ const Projects = () => {
         return res.json();
       })
       .then((data) => {
-        setProjects(data); 
-        setLoading(false); 
+        setProjects(data);
+        setLoading(false);
       })
       .catch((err) => {
-        setError(err.message); 
-        setLoading(false); 
+        setError(err.message);
+        setLoading(false);
       });
   }, []);
 
@@ -63,7 +64,11 @@ const Projects = () => {
             <p>No projects found.</p>
           ) : (
             filteredProjects.map((project) => (
-              <div key={project.id} className="bg-white text-gray-900 shadow-md rounded-lg p-4">
+              <div
+                key={project.id}
+                onClick={() => navigate(`/projects/${project.project_key}`)}
+                className="bg-white text-gray-900 shadow-md rounded-lg p-4 cursor-pointer hover:shadow-lg transition"
+              >
                 <h2 className="text-xl font-semibold mb-2">{project.name}</h2>
                 <p className="text-sm text-gray-600 mb-1">
                   Key: <span className="font-mono">{project.project_key}</span>

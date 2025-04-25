@@ -20,7 +20,7 @@ func NewHandler(store types.ProjectStore) *Handler {
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/projects", h.handleGetProjects).Methods("GET")
-	router.HandleFunc("/projects/{name}", h.handleGetProjectByName).Methods("GET")
+	router.HandleFunc("/projects/{key}", h.handleGetProjectByKey).Methods("GET")
 	router.HandleFunc("/projects", h.handleCreateProject).Methods("POST")
 }
 
@@ -34,16 +34,16 @@ func (h *Handler) handleGetProjects(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, projects)
 }
 
-func (h *Handler) handleGetProjectByName(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) handleGetProjectByKey(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	name := vars["name"]
-	project, err := h.store.GetProjectByKey(name)
+	key := vars["key"]
+	fmt.Print(key)
+	project, err := h.store.GetProjectByKey(key)
 	if err != nil {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("project not found"))
 		return
 	}
 	utils.WriteJSON(w, http.StatusOK, project)
-
 }
 
 func (h *Handler) handleCreateProject(w http.ResponseWriter, r *http.Request) {
