@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { fetchProjectDetails } from "../api/project";
 import { fetchIssues } from "../api/issue";
 
@@ -62,6 +62,14 @@ const ProjectDetails = () => {
         <h1 className="text-4xl font-bold mb-4">{project.name}</h1>
         <p className="text-lg max-w-2xl mx-auto">{project.description}</p>
       </header>
+
+      <div className="max-w-4xl mx-auto p-4 flex justify-end">
+        <Link to={`/standup/${key}`}>
+          <button className="py-2 px-6 bg-yellow-500 text-black rounded-lg hover:bg-yellow-600 focus:outline-none">
+            Go to Standup
+          </button>
+        </Link>
+      </div>
 
       <div className="max-w-4xl mx-auto p-4 bg-white text-gray-900 rounded-lg shadow-lg">
         <p><strong>Project Key:</strong> {project.project_key}</p>

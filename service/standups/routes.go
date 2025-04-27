@@ -21,7 +21,6 @@ func NewHandler(store types.StandupStore) *Handler {
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/standups/start", h.handleCreateStandup).Methods("POST")
 	router.HandleFunc("/standups/end", h.handleEndStandUp).Methods("POST")
-	router.HandleFunc("/filter-issues", h.handleIssueFiltering).Methods("GET")
 }
 
 func (h *Handler) handleCreateStandup(w http.ResponseWriter, r *http.Request) {
@@ -32,36 +31,31 @@ func (h *Handler) handleCreateStandup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := utils.Validate.Struct(standup); err != nil {
-		errors := err.(validator.ValidationErrors)
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
-	}
-
-	existingStandup, err := h.store.GetActiveStandup(standup)
-
+	// Get the last finished standup's end_time
+	lastEndTime, err := h.store.GetLastStandupEndTime(standup.ProjectKey)
 	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to check for active standup: %v", err))
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to retrieve last standup's end time: %v", err))
 		return
 	}
 
-	if existingStandup != nil {
-		utils.WriteError(w, http.StatusConflict, fmt.Errorf("an active standup already exists: %v", standup.ProjectKey))
+	// Filter issues that were updated after the last standup ended
+	issues, err := h.store.FilterTicketsByEndTime(standup.ProjectKey, lastEndTime)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to filter issues: %v", err))
 		return
 	}
 
-	newStandup := types.Standup{
-		ProjectKey: standup.ProjectKey,
-	}
-
-	if err := h.store.CreateStandup(newStandup); err != nil {
+	// Create the new standup (this will only happen after filtering the issues)
+	if err := h.store.CreateStandup(standup); err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusCreated, map[string]string{
+	// Respond with filtered issues and the creation success message
+	utils.WriteJSON(w, http.StatusCreated, map[string]any{
 		"message": "Standup Created Successfully",
+		"issues":  issues,
 	})
-
 }
 
 func (h *Handler) handleEndStandUp(w http.ResponseWriter, r *http.Request) {

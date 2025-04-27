@@ -2,6 +2,8 @@ package standups
 
 import (
 	"database/sql"
+	"errors"
+	"fmt"
 
 	"github.com/maximis3d/issue-tracking-system/types"
 )
@@ -59,15 +61,16 @@ func (s *Store) GetActiveStandup(standup types.Standup) (*types.Standup, error) 
 }
 
 func (s *Store) FilterTickets(project types.Project) ([]types.Issue, error) {
-	var lastEndTIme sql.NullTime
+	// Filters tickets from stand up, checks if a last stand up time exists and if not returns all issues.
+	var lastEndTime sql.NullTime
 
 	err := s.db.QueryRow(`
-	SELECT end_time
-	FROM standups
-	WHERE project_key = ? and end_time IS NOT NULL
-	ORDER BY end_time DESC
-	LIMIT 1
-	`, project.ProjectKey).Scan(&lastEndTIme)
+        SELECT end_time
+        FROM standups
+        WHERE project_key = ? and end_time IS NOT NULL
+        ORDER BY end_time DESC
+        LIMIT 1
+    `, project.ProjectKey).Scan(&lastEndTime)
 
 	if err == sql.ErrNoRows {
 		return nil, nil
@@ -77,16 +80,19 @@ func (s *Store) FilterTickets(project types.Project) ([]types.Issue, error) {
 		return nil, err
 	}
 
-	rows, err := s.db.Query(`
-		SELECT id, key, summary, reporter, assignee, status, issueType
-		FROM issues
-		WHERE project_key = ? and updated_at >`,
-		project.ProjectKey, lastEndTIme.Time,
-	)
+	var rows *sql.Rows
+	fmt.Println("Last End Time:", lastEndTime)
+
+	if lastEndTime.Valid {
+		rows, err = s.db.Query("SELECT id, `key`, summary, reporter, assignee, status, issueType FROM issues WHERE project_key = ? AND updatedAt > ?", project.ProjectKey, lastEndTime.Time)
+	} else {
+		rows, err = s.db.Query("SELECT id,`key` summary, reporter, assignee, status, issueType FROM issues WHERE project_key = ?", project.ProjectKey)
+	}
 
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	var issues []types.Issue
 
@@ -100,5 +106,58 @@ func (s *Store) FilterTickets(project types.Project) ([]types.Issue, error) {
 	}
 
 	return issues, nil
+}
 
+// Get the last standup's end_time for a given project.
+
+func (s *Store) GetLastStandupEndTime(projectKey string) (sql.NullTime, error) {
+	var lastEndTime sql.NullTime
+	err := s.db.QueryRow(`
+		SELECT end_time 
+		FROM standups 
+		WHERE project_key = ? 
+		  AND end_time IS NOT NULL 
+		ORDER BY end_time DESC 
+		LIMIT 1
+	`, projectKey).Scan(&lastEndTime)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			// No last standup found, return a valid sql.NullTime with Valid=false
+			return sql.NullTime{Valid: false}, nil
+		}
+		// Other real error
+		return lastEndTime, err
+	}
+
+	return lastEndTime, nil
+}
+
+// Filter issues that were updated after the provided last standup's end_time
+func (s *Store) FilterTicketsByEndTime(projectKey string, lastEndTime sql.NullTime) ([]types.Issue, error) {
+	var rows *sql.Rows
+	var err error
+
+	if lastEndTime.Valid {
+		rows, err = s.db.Query("SELECT id, `key`, summary, reporter, assignee, status, issueType FROM issues WHERE project_key = ? AND updatedAt > ?", projectKey, lastEndTime.Time)
+	} else {
+		// If no standup has ended, return all issues for the project
+		rows, err = s.db.Query("SELECT id, `key`, summary, reporter, assignee, status, issueType FROM issues WHERE project_key = ?", projectKey)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var issues []types.Issue
+	for rows.Next() {
+		var issue types.Issue
+		if err := rows.Scan(&issue.ID, &issue.Key, &issue.Summary, &issue.Reporter, &issue.Assignee, &issue.Status, &issue.IssueType); err != nil {
+			return nil, err
+		}
+		issues = append(issues, issue)
+	}
+
+	return issues, nil
 }

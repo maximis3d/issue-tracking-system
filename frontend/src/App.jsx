@@ -3,10 +3,12 @@ import SignIn from "./components/loginForm/loginForm";
 import Register from "./components/registerForm/registerForm";
 import CreateProject from "./components/projectCreationForm/projectCreation";
 import CreateIssue from "./components/issueCreationForm/issueCreation";
-import ProjectDetails from "./pages/Project";
 
 import LandingPage from "./pages/LandingPage";
 import Projects from "./pages/Projects";
+import StandUp from "./pages/StandUp";
+import ProjectDetails from "./pages/Project";
+
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
         <Route path="/create-issue" element={<CreateIssue />} />
         <Route path="/create-issue" element={<CreateIssue />} />
         <Route path="/projects/:key" element={<ProjectDetails />} /> 
+        <Route path="/standup/:key" element={<StandUp />} /> 
+        
       </Routes>
     </Router>
   );

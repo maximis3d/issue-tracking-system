@@ -1,6 +1,7 @@
 package types
 
 import (
+	"database/sql"
 	"time"
 )
 
@@ -107,6 +108,8 @@ type StandupStore interface {
 	EndCurrentStandUp(Standup) error
 	GetActiveStandup(Standup) (*Standup, error)
 	FilterTickets(Project) ([]Issue, error)
+	FilterTicketsByEndTime(projectKey string, lastEndTime sql.NullTime) ([]Issue, error)
+	GetLastStandupEndTime(projectKey string) (sql.NullTime, error)
 }
 
 type Scope struct {
