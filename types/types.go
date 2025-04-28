@@ -125,3 +125,16 @@ type ScopeStore interface {
 	AddProjectToScope(scopeID int, projectKey string) error
 	GetIssuesByScope(scopeID int) ([]Issue, error)
 }
+
+type ProjectAssignment struct {
+	ProjectID  int       `json:"project_id"`
+	UserID     int       `json:"user_id"`
+	Role       string    `json:"role"`
+	AssignedAt time.Time `json:"assigned_at"`
+}
+
+type ProjectAssignmentStore interface {
+	AssignUserToProject(projectID int, userID int, role string) error
+	RemoveUserFromProject(projectID int, userID int) error
+	GetUsersForProject(projectID int) ([]User, error)
+}

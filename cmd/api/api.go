@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/maximis3d/issue-tracking-system/service/issue"
 	"github.com/maximis3d/issue-tracking-system/service/project"
+	projectassignment "github.com/maximis3d/issue-tracking-system/service/project_assignment"
 	projectscopes "github.com/maximis3d/issue-tracking-system/service/project_scopes"
 	"github.com/maximis3d/issue-tracking-system/service/standups"
 	"github.com/maximis3d/issue-tracking-system/service/user"
@@ -49,6 +50,10 @@ func (s *APIServer) Run() error {
 	scopeStore := projectscopes.NewStore(s.db)
 	scopeHandler := projectscopes.NewHandler(scopeStore)
 	scopeHandler.RegisterRoutes(subrouter)
+
+	projectAssignmentStore := projectassignment.NewStore(s.db)
+	projectassignmentHandler := projectassignment.NewHandler((projectAssignmentStore))
+	projectassignmentHandler.RegisterRoutes(subrouter)
 
 	// Enable CORS
 	corsHandler := handlers.CORS(
