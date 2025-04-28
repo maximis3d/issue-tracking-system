@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+
 import { fetchProjectDetails } from "../api/project";
 import { fetchIssues } from "../api/issue";
 
@@ -96,7 +97,11 @@ const ProjectDetails = () => {
                 <h3 className="text-xl font-semibold mb-4 text-center">{status}</h3>
                 <div className="space-y-4">
                   {groupedIssues[status]?.map((issue) => (
-                    <div key={issue.id} className="bg-white p-4 rounded-lg shadow-md text-black">
+                    <Link 
+                      key={issue.id} 
+                      to={`/issues/${issue.id}`}
+                      className="bg-white p-4 rounded-lg shadow-md text-black block"
+                    >
                       <h4 className="text-lg font-semibold mb-2">{issue.summary}</h4>
                       <p className="text-sm mb-1">
                         <strong>Key:</strong> {issue.key}
@@ -110,7 +115,7 @@ const ProjectDetails = () => {
                       <p className="text-xs text-gray-600">
                         Last updated: {new Date(issue.updatedAt).toLocaleDateString()}
                       </p>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               </div>

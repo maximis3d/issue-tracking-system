@@ -8,7 +8,7 @@ import LandingPage from "./pages/LandingPage";
 import Projects from "./pages/Projects";
 import StandUp from "./pages/StandUp";
 import ProjectDetails from "./pages/Project";
-
+import Issue from "./pages/Issue";
 
 function App() {
   return (
@@ -23,6 +23,7 @@ function App() {
         <Route path="/create-issue" element={<CreateIssue />} />
         <Route path="/projects/:key" element={<ProjectDetails />} /> 
         <Route path="/standup/:key" element={<StandUp />} /> 
+        <Route path="/issues/:id" element={<Issue />} /> 
         
       </Routes>
     </Router>

@@ -24,6 +24,8 @@ func NewHandler(store types.IssueStore) *Handler {
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/createIssue", h.handleCreateIssue).Methods("POST")
 	router.HandleFunc("/issues/{id}", h.handleUpdateIssue).Methods("PUT")
+	router.HandleFunc("/issue/{id}", h.handleGetIssueById).Methods("GET")
+
 	router.HandleFunc("/issues/{key}", h.handleGetIssuesByProject).Methods("GET")
 
 }
@@ -135,5 +137,27 @@ func (h *Handler) handleGetIssuesByProject(w http.ResponseWriter, r *http.Reques
 		"message":    "Issues fetched successfully",
 		"projectKey": projectKey,
 		"issues":     issues,
+	})
+}
+
+func (h *Handler) handleGetIssueById(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	Id := vars["id"]
+	issueID, err := strconv.Atoi(Id)
+
+	if err != nil {
+		http.Error(w, "Invalid issue ID", http.StatusBadRequest)
+		return
+	}
+
+	issue, err := h.store.GetIssueByID(issueID)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("issue not found"))
+	}
+
+	utils.WriteJSON(w, http.StatusOK, map[string]any{
+		"message": "Issue fetched successfully",
+		"issue":   issue,
 	})
 }
