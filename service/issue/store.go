@@ -82,7 +82,7 @@ func (s *Store) UpdateIssue(issue types.Issue) error {
 func (s *Store) GetIssueByID(id int) (*types.Issue, error) {
 	i := &types.Issue{}
 
-	err := s.db.QueryRow("SELECT id, `key`, summary, description, project_key, reporter, assignee, status, issueType, updatedAt FROM issues WHERE id=?", id).
+	err := s.db.QueryRow("SELECT id, `key`, summary, description, project_key, reporter, assignee, status, issueType, createdAt, updatedAt FROM issues WHERE id=?", id).
 		Scan(
 			&i.ID,
 			&i.Key,
@@ -93,6 +93,7 @@ func (s *Store) GetIssueByID(id int) (*types.Issue, error) {
 			&i.Assignee,
 			&i.Status,
 			&i.IssueType,
+			&i.CreatedAt,
 			&i.UpdatedAt,
 		)
 

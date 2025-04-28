@@ -66,6 +66,7 @@ type Issue struct {
 	Status      string `json:"status" validate:"required"`
 	IssueType   string `json:"issueType" validate:"required"`
 
+	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt" validate:"required"`
 }
 
