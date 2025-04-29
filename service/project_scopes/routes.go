@@ -24,6 +24,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/scopes/{id}", h.handleAddProject).Methods("POST")
 	router.HandleFunc("/scopes/issues/{id}", h.handleGetIssuesByScope).Methods("GET")
 	router.HandleFunc("/scopes/details/{id}", h.handleGetScopeDetails).Methods("GET")
+	router.HandleFunc("/scopes", h.handleGetAllScopeDetails).Methods("GET")
 
 }
 
@@ -124,4 +125,17 @@ func (h *Handler) handleGetScopeDetails(w http.ResponseWriter, r *http.Request) 
 	}
 
 	utils.WriteJSON(w, http.StatusOK, scope)
+}
+
+func (h *Handler) handleGetAllScopeDetails(w http.ResponseWriter, r *http.Request) {
+	scopes, err := h.store.GetAllScopeDetails()
+
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to retrieve scopes: %v", err))
+		return
+	}
+	utils.WriteJSON(w, http.StatusOK, map[string]any{
+		"message": "Scopes successfully retrieved",
+		"scopes":  scopes,
+	})
 }

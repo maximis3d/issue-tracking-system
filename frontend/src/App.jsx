@@ -12,6 +12,7 @@ import Issue from "./pages/Issue";
 import EditIssue from "./pages/EditIssue";
 import ProjectAssignment from "./pages/ProjectAssignment";
 import Scope from "./pages/Scope";
+import Scopes from "./pages/Scopes";
 
 function App() {
   return (
@@ -29,7 +30,8 @@ function App() {
         <Route path="/issues/:id" element={<Issue />} /> 
         <Route path="/issues/:id/edit" element={<EditIssue />} />
         <Route path="/assign-user" element={<ProjectAssignment />} />
-        <Route path="/scope/:id" element={<Scope />} />        
+        <Route path="/scope/:id" element={<Scope />} />
+        <Route path="/scopes" element={<Scopes />} />        
       </Routes>
     </Router>
   );

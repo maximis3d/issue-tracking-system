@@ -18,7 +18,7 @@ export default function Navbar() {
     { label: "Assign Users", onClick: () => navigate("/assign-user") },
   ]
   const scopeOptions = [
-    {label: "All Scopes", onClick: () => navigate("/all-scopes")},
+    {label: "All Scopes", onClick: () => navigate("/scopes")},
     {label: "Create Scope", onClick: () => navigate("/create-scope")},
   ]
 

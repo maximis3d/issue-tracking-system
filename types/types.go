@@ -114,10 +114,11 @@ type StandupStore interface {
 }
 
 type Scope struct {
-	ID          int      `json:"id"`
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Projects    []string `json:"projects"`
+	ID          int       `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Projects    []string  `json:"projects"`
+	CreatedAt   time.Time `json:"createdAt"`
 }
 
 type ScopeStore interface {
@@ -125,6 +126,7 @@ type ScopeStore interface {
 	AddProjectToScope(scopeID int, projectKey string) error
 	GetIssuesByScope(scopeID int) ([]Issue, error)
 	GetScopeDetails(scopeId int) (*Scope, error)
+	GetAllScopeDetails() ([]Scope, error)
 }
 
 type ProjectAssignment struct {

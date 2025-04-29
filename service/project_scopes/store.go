@@ -123,3 +123,24 @@ func (s *Store) GetScopeDetails(scopeId int) (*types.Scope, error) {
 
 	return &scope, nil
 }
+
+func (s *Store) GetAllScopeDetails() ([]types.Scope, error) {
+	query := `SELECT id, name, description, created_at from scopes`
+	rows, err := s.db.Query(query)
+	defer rows.Close()
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve scopes: %v", err)
+	}
+
+	var scopes []types.Scope
+
+	for rows.Next() {
+		var scope types.Scope
+		if err := rows.Scan(&scope.ID, &scope.Name, &scope.Description, &scope.CreatedAt); err != nil {
+			return nil, fmt.Errorf("failed to scan scope: %v", err)
+		}
+		scopes = append(scopes, scope)
+	}
+	return scopes, nil
+}
