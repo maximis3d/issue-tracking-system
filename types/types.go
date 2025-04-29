@@ -124,6 +124,7 @@ type ScopeStore interface {
 	CreateScope(Scope) error
 	AddProjectToScope(scopeID int, projectKey string) error
 	GetIssuesByScope(scopeID int) ([]Issue, error)
+	GetScopeDetails(scopeId int) (*Scope, error)
 }
 
 type ProjectAssignment struct {

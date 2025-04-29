@@ -90,3 +90,36 @@ func (s *Store) GetIssuesByScope(scopeID int) ([]types.Issue, error) {
 
 	return issues, nil
 }
+
+func (s *Store) GetScopeDetails(scopeId int) (*types.Scope, error) {
+	var scope types.Scope
+
+	// Get scope metadata
+	err := s.db.QueryRow("SELECT id, name, description FROM scopes WHERE id = ?", scopeId).
+		Scan(&scope.ID, &scope.Name, &scope.Description)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("scope not found")
+		}
+		return nil, fmt.Errorf("failed to retrieve scope: %v", err)
+	}
+
+	// Get associated projects
+	rows, err := s.db.Query("SELECT project_key FROM project_scope WHERE scope_id = ?", scopeId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve associated projects: %v", err)
+	}
+	defer rows.Close()
+
+	var projects []string
+	for rows.Next() {
+		var projectKey string
+		if err := rows.Scan(&projectKey); err != nil {
+			return nil, fmt.Errorf("failed to scan project key: %v", err)
+		}
+		projects = append(projects, projectKey)
+	}
+	scope.Projects = projects
+
+	return &scope, nil
+}

@@ -23,6 +23,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/scopes", h.handleCreateScope).Methods("POST")
 	router.HandleFunc("/scopes/{id}", h.handleAddProject).Methods("POST")
 	router.HandleFunc("/scopes/issues/{id}", h.handleGetIssuesByScope).Methods("GET")
+	router.HandleFunc("/scopes/details/{id}", h.handleGetScopeDetails).Methods("GET")
 
 }
 
@@ -99,6 +100,28 @@ func (h *Handler) handleGetIssuesByScope(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, issues)
+	utils.WriteJSON(w, http.StatusOK, map[string]any{
+		"message": "Issues Successfully Retrieved",
+		"issues":  issues,
+	})
 
+}
+
+func (h *Handler) handleGetScopeDetails(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	scopeID, err := strconv.Atoi(id)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid scope ID: %v", err))
+		return
+	}
+
+	scope, err := h.store.GetScopeDetails(scopeID)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to retrieve scope details: %v", err))
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, scope)
 }
