@@ -10,6 +10,7 @@ import StandUp from "./pages/StandUp";
 import ProjectDetails from "./pages/Project";
 import Issue from "./pages/Issue";
 import EditIssue from "./pages/EditIssue";
+import ProjectAssignment from "./pages/ProjectAssignment";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/standup/:key" element={<StandUp />} /> 
         <Route path="/issues/:id" element={<Issue />} /> 
         <Route path="/issues/:id/edit" element={<EditIssue />} />
+        <Route path="/assign-user" element={<ProjectAssignment />} />
         
       </Routes>
     </Router>

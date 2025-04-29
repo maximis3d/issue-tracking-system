@@ -71,7 +71,6 @@ const ProjectDetails = () => {
           </button>
         </Link>
       </div>
-
       <div className="max-w-4xl mx-auto p-4 bg-white text-gray-900 rounded-lg shadow-lg">
         <p><strong>Project Key:</strong> {project.project_key}</p>
         <p><strong>Lead:</strong> {project.projectLead}</p>
@@ -97,8 +96,8 @@ const ProjectDetails = () => {
                 <h3 className="text-xl font-semibold mb-4 text-center">{status}</h3>
                 <div className="space-y-4">
                   {groupedIssues[status]?.map((issue) => (
-                    <Link 
-                      key={issue.id} 
+                    <Link
+                      key={issue.id}
                       to={`/issues/${issue.id}`}
                       className="bg-white p-4 rounded-lg shadow-md text-black block"
                     >

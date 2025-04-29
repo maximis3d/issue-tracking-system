@@ -58,3 +58,25 @@ func (s *Store) GetUsersForProject(projectID int) ([]types.User, error) {
 	}
 	return users, nil
 }
+
+func (s *Store) GetAllUsers() ([]types.User, error) {
+	query := `
+		SELECT id, firstName, lastName, email
+		FROM users
+	`
+	rows, err := s.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	var users []types.User
+	for rows.Next() {
+		var u types.User
+		if err := rows.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Email); err != nil {
+			return nil, err
+		}
+		users = append(users, u)
+	}
+	return users, nil
+
+}

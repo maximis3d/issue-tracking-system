@@ -23,6 +23,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/projects-assignment/{projectID}/assign/{userID}", h.handleAssignUser).Methods("POST")
 	router.HandleFunc("/projects-assignment/{projectID}/remove/{userID}", h.handleRemoveUser).Methods("DELETE")
 	router.HandleFunc("/projects-assignment/{projectID}/assigned-users", h.handleGetAssignedUsers).Methods("GET")
+	router.HandleFunc("/users", h.handleGetAllUsers).Methods("GET")
 }
 
 // handleAssignUser assigns a user to a project.
@@ -112,4 +113,19 @@ func (h *Handler) handleGetAssignedUsers(w http.ResponseWriter, r *http.Request)
 
 	// Return list of users
 	utils.WriteJSON(w, http.StatusOK, users)
+}
+
+func (h *Handler) handleGetAllUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := h.store.GetAllUsers()
+
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("failed to retrive users: %v", err))
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, map[string]any{
+		"message": "Users retrieved succesfully",
+		"users":   users,
+	})
+
 }

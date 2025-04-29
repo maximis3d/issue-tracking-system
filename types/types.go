@@ -137,4 +137,5 @@ type ProjectAssignmentStore interface {
 	AssignUserToProject(projectID int, userID int, role string) error
 	RemoveUserFromProject(projectID int, userID int) error
 	GetUsersForProject(projectID int) ([]User, error)
+	GetAllUsers() ([]User, error)
 }
