@@ -14,6 +14,10 @@ export default function Navbar() {
     { label: 'Create Issue', onClick: () => navigate('/create-issue') },
   ];
 
+  const userOptions = [
+    { label: "Assign Users", onClick: () => navigate("/assign-user") }
+  ]
+
   return (
     <nav className="flex items-center justify-between px-6 py-4 shadow-sm bg-white">
       <div className="flex items-center space-x-6">
@@ -21,6 +25,8 @@ export default function Navbar() {
 
         <Dropdown label="Projects" options={projectOptions} />
         <Dropdown label="Issues" options={issueOptions} />
+        <Dropdown label="Users" options={userOptions} />
+
       </div>
 
       {/* Right Section: Auth buttons */}
