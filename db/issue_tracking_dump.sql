@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.41, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.42, for Linux (x86_64)
 --
 -- Host: localhost    Database: issue_tracking_system
 -- ------------------------------------------------------
--- Server version	8.0.41
+-- Server version	8.0.42
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -47,8 +47,37 @@ CREATE TABLE `issues` (
 
 LOCK TABLES `issues` WRITE;
 /*!40000 ALTER TABLE `issues` DISABLE KEYS */;
-INSERT INTO `issues` VALUES (1,'TP8-001','test summary','test descriptions','TP8','john.doe@example.com','jane.doe@example.com','open','bug','2025-04-15 16:38:17','2025-04-15 16:38:17'),(3,'TP7-001','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','open','bug','2025-04-15 16:41:26','2025-04-15 16:41:26'),(4,'TP7-002','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-27 15:28:36','2025-04-27 15:28:36'),(5,'TP7-003','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-27 16:28:24','2025-04-27 16:28:24'),(6,'TP7-004','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-27 16:28:48','2025-04-27 16:28:48'),(7,'TP7-005','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-27 18:24:03','2025-04-27 18:24:03'),(8,'TP7-006','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-28 10:59:44','2025-04-28 10:59:44'),(9,'TP7-007','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-28 14:02:45','2025-04-28 14:02:45'),(10,'TP7-008','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-28 14:03:00','2025-04-28 14:03:00');
+INSERT INTO `issues` VALUES (1,'TP8-001','test summary','test descriptions','TP8','john.doe@example.com','jane.doe@example.com','open','bug','2025-04-15 16:38:17','2025-04-15 16:38:17'),(3,'TP7-001','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','open','bug','2025-04-15 16:41:26','2025-04-15 16:41:26'),(4,'TP7-002','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','open','bug','2025-04-27 15:28:36','2025-04-28 16:32:02'),(5,'TP7-003','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-27 16:28:24','2025-04-27 16:28:24'),(6,'TP7-004','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-27 16:28:48','2025-04-27 16:28:48'),(7,'TP7-005','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-27 18:24:03','2025-04-27 18:24:03'),(8,'TP7-006','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-28 10:59:44','2025-04-28 10:59:44'),(9,'TP7-007','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-28 14:02:45','2025-04-28 14:02:45'),(10,'TP7-008','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-28 14:03:00','2025-04-28 14:03:00');
 /*!40000 ALTER TABLE `issues` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `project_assignments`
+--
+
+DROP TABLE IF EXISTS `project_assignments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `project_assignments` (
+  `project_id` int NOT NULL,
+  `user_id` int unsigned NOT NULL,
+  `role` varchar(255) DEFAULT 'member',
+  `assigned_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`project_id`,`user_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `project_assignments_ibfk_1` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `project_assignments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `project_assignments`
+--
+
+LOCK TABLES `project_assignments` WRITE;
+/*!40000 ALTER TABLE `project_assignments` DISABLE KEYS */;
+INSERT INTO `project_assignments` VALUES (1,1,'member','2025-04-28 20:20:31');
+/*!40000 ALTER TABLE `project_assignments` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -133,7 +162,7 @@ CREATE TABLE `schema_migrations` (
 
 LOCK TABLES `schema_migrations` WRITE;
 /*!40000 ALTER TABLE `schema_migrations` DISABLE KEYS */;
-INSERT INTO `schema_migrations` VALUES (20250415151725,0);
+INSERT INTO `schema_migrations` VALUES (20250428195934,0);
 /*!40000 ALTER TABLE `schema_migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -231,4 +260,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-28 14:17:49
+-- Dump completed on 2025-04-29 10:33:41
