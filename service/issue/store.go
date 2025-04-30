@@ -47,6 +47,7 @@ func (s *Store) UpdateIssue(issue types.Issue) error {
 		return fmt.Errorf("failed to fetch current issue status: %v", err)
 	}
 
+	// Enforce WIP limit when moving to in_progress
 	if issue.Status == "in_progress" && currentStatus != "in_progress" {
 		var wipLimit int
 		var inProgressCount int
@@ -66,12 +67,35 @@ func (s *Store) UpdateIssue(issue types.Issue) error {
 		}
 	}
 
-	_, err = s.db.Exec(`
+	// Prepare dynamic update for timestamps
+	query := `
 		UPDATE issues 
-		SET summary = ?, description = ?, project_key = ?, reporter = ?, assignee = ?, status = ?, issueType = ?, updatedAt = NOW()
-		WHERE id = ?`,
-		issue.Summary, issue.Description, issue.ProjectKey, issue.Reporter, issue.Assignee, issue.Status, issue.IssueType, issue.ID)
+		SET summary = ?, description = ?, project_key = ?, reporter = ?, assignee = ?, status = ?, issueType = ?, updatedAt = NOW()`
 
+	args := []interface{}{
+		issue.Summary,
+		issue.Description,
+		issue.ProjectKey,
+		issue.Reporter,
+		issue.Assignee,
+		issue.Status,
+		issue.IssueType,
+	}
+
+	// Add started_at if moving to in_progress
+	if issue.Status == "in_progress" && currentStatus != "in_progress" {
+		query += `, started_at = NOW()`
+	}
+
+	// Add finished_at if moving to done
+	if issue.Status == "resolved" && currentStatus != "resolved" {
+		query += `, finished_at = NOW()`
+	}
+
+	query += ` WHERE id = ?`
+	args = append(args, issue.ID)
+
+	_, err = s.db.Exec(query, args...)
 	if err != nil {
 		return fmt.Errorf("failed to update issue: %v", err)
 	}
@@ -82,26 +106,34 @@ func (s *Store) UpdateIssue(issue types.Issue) error {
 func (s *Store) GetIssueByID(id int) (*types.Issue, error) {
 	i := &types.Issue{}
 
-	err := s.db.QueryRow("SELECT id, `key`, summary, description, project_key, reporter, assignee, status, issueType, createdAt, updatedAt FROM issues WHERE id=?", id).
-		Scan(
-			&i.ID,
-			&i.Key,
-			&i.Summary,
-			&i.Description,
-			&i.ProjectKey,
-			&i.Reporter,
-			&i.Assignee,
-			&i.Status,
-			&i.IssueType,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-		)
+	// Query to get the issue details, including started_at and finished_at
+	err := s.db.QueryRow("SELECT id, `key`, summary, description, project_key, reporter, assignee, status, issueType, createdAt, updatedAt, started_at, finished_at FROM issues WHERE id = ?", id).Scan(
+		&i.ID,
+		&i.Key,
+		&i.Summary,
+		&i.Description,
+		&i.ProjectKey,
+		&i.Reporter,
+		&i.Assignee,
+		&i.Status,
+		&i.IssueType,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.StartedAt,
+		&i.FinishedAt,
+	)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, fmt.Errorf("issue with ID %d not found", id)
 		}
 		return nil, err
+	}
+
+	// Calculate cycle time if both started_at and finished_at are available
+	if i.StartedAt.Valid && i.FinishedAt.Valid {
+		duration := i.FinishedAt.Time.Sub(i.StartedAt.Time)
+		i.CycleTime = duration.String()
 	}
 
 	return i, nil

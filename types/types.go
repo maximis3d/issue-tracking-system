@@ -65,9 +65,13 @@ type Issue struct {
 	Assignee    string `json:"assignee" validate:"required"`
 	Status      string `json:"status" validate:"required"`
 	IssueType   string `json:"issueType" validate:"required"`
+	SprintID    int    `json:"sprint_id"`
 
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt" validate:"required"`
+	StartedAt  sql.NullTime
+	FinishedAt sql.NullTime
+	CycleTime  string    `json:"cycle_time"`
+	CreatedAt  time.Time `json:"createdAt"`
+	UpdatedAt  time.Time `json:"updatedAt" validate:"required"`
 }
 
 type IssuePayload struct {
@@ -78,6 +82,7 @@ type IssuePayload struct {
 	Assignee    string `json:"assignee" validate:"required"`
 	Status      string `json:"status" validate:"required"`
 	IssueType   string `json:"issueType" validate:"required"`
+	SprintID    int    `json:"sprint_id"`
 }
 type IssueUpdatePayload struct {
 	Summary     *string `json:"summary,omitempty"`
@@ -87,6 +92,7 @@ type IssueUpdatePayload struct {
 	Assignee    *string `json:"assignee,omitempty"`
 	Status      *string `json:"status,omitempty"`
 	IssueType   *string `json:"issueType,omitempty"`
+	SprintID    *int    `json:"sprint_id"`
 }
 
 type IssueStore interface {
@@ -143,4 +149,17 @@ type ProjectAssignmentStore interface {
 	GetUsersForProject(projectID int) ([]User, error)
 	GetAllUsers() ([]User, error)
 	IsUserAssignedToProject(projectID int, userID int) (bool, error)
+}
+type SprintStore interface {
+	CreateSprint(sprint Sprint) error
+	AddIssueToSprint(issueID, sprintID int) error
+	GetIssuesInSprint(sprintID int) ([]Issue, error)
+}
+type Sprint struct {
+	ID          int       `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	StartDate   time.Time `json:"start_date"`
+	EndDate     time.Time `json:"end_date"`
+	ProjectKey  string    `json:"project_key"`
 }

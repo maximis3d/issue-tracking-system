@@ -34,11 +34,14 @@ CREATE TABLE `issues` (
   `issueType` enum('bug','task','story') NOT NULL DEFAULT 'task',
   `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `sprint_id` int unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `key` (`key`),
   KEY `project_key` (`project_key`),
+  KEY `fk_issues_sprint` (`sprint_id`),
+  CONSTRAINT `fk_issues_sprint` FOREIGN KEY (`sprint_id`) REFERENCES `sprints` (`id`) ON DELETE SET NULL,
   CONSTRAINT `issues_ibfk_1` FOREIGN KEY (`project_key`) REFERENCES `projects` (`project_key`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -47,7 +50,7 @@ CREATE TABLE `issues` (
 
 LOCK TABLES `issues` WRITE;
 /*!40000 ALTER TABLE `issues` DISABLE KEYS */;
-INSERT INTO `issues` VALUES (1,'TP8-001','test summary','test descriptions','TP8','john.doe@example.com','jane.doe@example.com','open','bug','2025-04-15 16:38:17','2025-04-15 16:38:17'),(3,'TP7-001','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','open','bug','2025-04-15 16:41:26','2025-04-15 16:41:26'),(4,'TP7-002','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','open','bug','2025-04-27 15:28:36','2025-04-28 16:32:02'),(5,'TP7-003','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-27 16:28:24','2025-04-27 16:28:24'),(6,'TP7-004','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-27 16:28:48','2025-04-27 16:28:48'),(7,'TP7-005','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-27 18:24:03','2025-04-27 18:24:03'),(8,'TP7-006','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-28 10:59:44','2025-04-28 10:59:44'),(9,'TP7-007','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-28 14:02:45','2025-04-28 14:02:45'),(10,'TP7-008','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-28 14:03:00','2025-04-28 14:03:00');
+INSERT INTO `issues` VALUES (1,'TP8-001','test summary','test descriptions','TP8','john.doe@example.com','jane.doe@example.com','open','bug','2025-04-15 16:38:17','2025-04-15 16:38:17',NULL),(3,'TP7-001','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','open','bug','2025-04-15 16:41:26','2025-04-15 16:41:26',NULL),(4,'TP7-002','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','open','bug','2025-04-27 15:28:36','2025-04-28 16:32:02',NULL),(5,'TP7-003','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-27 16:28:24','2025-04-27 16:28:24',NULL),(6,'TP7-004','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-27 16:28:48','2025-04-27 16:28:48',NULL),(7,'TP7-005','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-27 18:24:03','2025-04-27 18:24:03',NULL),(8,'TP7-006','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-28 10:59:44','2025-04-28 10:59:44',NULL),(9,'TP7-007','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-28 14:02:45','2025-04-28 14:02:45',NULL),(10,'TP7-008','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-28 14:03:00','2025-04-28 14:03:00',NULL),(11,'TP7-009','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-30 18:53:13','2025-04-30 18:53:13',NULL),(12,'TP7-010','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-30 18:53:35','2025-04-30 18:53:35',NULL),(13,'TP7-011','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-30 18:58:07','2025-04-30 18:58:07',NULL);
 /*!40000 ALTER TABLE `issues` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -76,7 +79,7 @@ CREATE TABLE `project_assignments` (
 
 LOCK TABLES `project_assignments` WRITE;
 /*!40000 ALTER TABLE `project_assignments` DISABLE KEYS */;
-INSERT INTO `project_assignments` VALUES (1,1,'member','2025-04-28 20:20:31');
+INSERT INTO `project_assignments` VALUES (1,1,'member','2025-04-28 20:20:31'),(1,2,'member','2025-04-29 11:37:58'),(1,3,'developer','2025-04-29 12:04:06'),(2,1,'member','2025-04-29 11:58:14'),(2,2,'member','2025-04-29 11:40:45'),(2,3,'member','2025-04-29 12:05:58');
 /*!40000 ALTER TABLE `project_assignments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -96,7 +99,7 @@ CREATE TABLE `project_scope` (
   KEY `scope_id` (`scope_id`),
   CONSTRAINT `project_scope_ibfk_1` FOREIGN KEY (`project_key`) REFERENCES `projects` (`project_key`) ON DELETE CASCADE,
   CONSTRAINT `project_scope_ibfk_2` FOREIGN KEY (`scope_id`) REFERENCES `scopes` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -105,7 +108,7 @@ CREATE TABLE `project_scope` (
 
 LOCK TABLES `project_scope` WRITE;
 /*!40000 ALTER TABLE `project_scope` DISABLE KEYS */;
-INSERT INTO `project_scope` VALUES (3,'TP7',4),(4,'TP7',6),(5,'TP8',6);
+INSERT INTO `project_scope` VALUES (5,'TP8',6),(6,'TP7',7),(7,'TP7',8);
 /*!40000 ALTER TABLE `project_scope` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -138,7 +141,7 @@ CREATE TABLE `projects` (
 
 LOCK TABLES `projects` WRITE;
 /*!40000 ALTER TABLE `projects` DISABLE KEYS */;
-INSERT INTO `projects` VALUES (1,'TP7','Test Project 7','Test project description',1,8,'2025-03-28 13:16:21',0),(2,'TP8','Test Project 7','Test project description',1,1,'2025-04-15 16:23:11',2);
+INSERT INTO `projects` VALUES (1,'TP7','Test Project 7','Test project description',1,11,'2025-03-28 13:16:21',0),(2,'TP8','Test Project 7','Test project description',1,1,'2025-04-15 16:23:11',2);
 /*!40000 ALTER TABLE `projects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -180,7 +183,7 @@ CREATE TABLE `scopes` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -189,8 +192,67 @@ CREATE TABLE `scopes` (
 
 LOCK TABLES `scopes` WRITE;
 /*!40000 ALTER TABLE `scopes` DISABLE KEYS */;
-INSERT INTO `scopes` VALUES (1,'Cross-functional Initiative','This scope involves multiple teams across different business areas.','2025-04-15 16:05:47'),(4,'Cross-functional Initiative 2','This scope involves multiple teams across different business areas.','2025-04-15 16:07:03'),(6,'Cross-functional Initiative 3','This scope involves multiple teams across different business areas.','2025-04-15 16:18:12');
+INSERT INTO `scopes` VALUES (1,'Cross-functional Initiative','This scope involves multiple teams across different business areas.','2025-04-15 16:05:47'),(4,'Cross-functional Initiative 2','This scope involves multiple teams across different business areas.','2025-04-15 16:07:03'),(6,'Cross-functional Initiative 3','This scope involves multiple teams across different business areas.','2025-04-15 16:18:12'),(7,'Test Scope from UI','LOLOL','2025-04-30 08:05:08'),(8,'Sprint Alpha','Spring Alpha Description','2025-04-30 08:17:40'),(9,'TEs','sdf','2025-04-30 08:27:44'),(10,'Test','add','2025-04-30 08:44:10');
 /*!40000 ALTER TABLE `scopes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `sprint_issues`
+--
+
+DROP TABLE IF EXISTS `sprint_issues`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `sprint_issues` (
+  `issue_id` int unsigned NOT NULL,
+  `sprint_id` int unsigned NOT NULL,
+  PRIMARY KEY (`issue_id`,`sprint_id`),
+  KEY `sprint_id` (`sprint_id`),
+  CONSTRAINT `sprint_issues_ibfk_1` FOREIGN KEY (`issue_id`) REFERENCES `issues` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `sprint_issues_ibfk_2` FOREIGN KEY (`sprint_id`) REFERENCES `sprints` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sprint_issues`
+--
+
+LOCK TABLES `sprint_issues` WRITE;
+/*!40000 ALTER TABLE `sprint_issues` DISABLE KEYS */;
+INSERT INTO `sprint_issues` VALUES (6,2);
+/*!40000 ALTER TABLE `sprint_issues` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `sprints`
+--
+
+DROP TABLE IF EXISTS `sprints`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `sprints` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `description` text,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `project_key` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `project_key` (`project_key`),
+  CONSTRAINT `sprints_ibfk_1` FOREIGN KEY (`project_key`) REFERENCES `projects` (`project_key`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sprints`
+--
+
+LOCK TABLES `sprints` WRITE;
+/*!40000 ALTER TABLE `sprints` DISABLE KEYS */;
+INSERT INTO `sprints` VALUES (2,'Sprint 1','This is the first sprint focusing on core features.','2025-05-01','2025-05-14','TP7','2025-04-30 18:28:11','2025-04-30 18:28:11');
+/*!40000 ALTER TABLE `sprints` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -209,7 +271,7 @@ CREATE TABLE `standups` (
   PRIMARY KEY (`id`),
   KEY `project_key` (`project_key`),
   CONSTRAINT `standups_ibfk_1` FOREIGN KEY (`project_key`) REFERENCES `projects` (`project_key`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -238,7 +300,7 @@ CREATE TABLE `users` (
   `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -247,7 +309,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Max','Marston','max.marston@test.com','$2a$10$vzdUsM063NeXALZkDt7uM.rOIqyUaTJU2kSwk.suiLWqhOElc3sDO','2025-03-28 13:16:09');
+INSERT INTO `users` VALUES (1,'Max','Marston','max.marston@test.com','$2a$10$vzdUsM063NeXALZkDt7uM.rOIqyUaTJU2kSwk.suiLWqhOElc3sDO','2025-03-28 13:16:09'),(2,'Holly','Briggs','holly.briggs@test.com','$2a$10$UKAcq.6bYJu98W4W28sxAuq.kJZB8m.ZXxu6OINDtNvMiYipAdTjS','2025-04-29 11:34:48'),(3,'Greg','Hall','greg.hall@test.com','$2a$10$r1D9hBjj8HxnJquO2.HZFufB/3alQHeXwbbYKwTImbIkpW6c7FBuG','2025-04-29 12:03:56');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -260,4 +322,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-29 10:33:41
+-- Dump completed on 2025-04-30 19:15:18

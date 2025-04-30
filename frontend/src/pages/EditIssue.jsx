@@ -40,7 +40,7 @@ const EditIssue = () => {
     const statusMapping = {
       'To Do': 'open',
       'In Progress': 'in_progress',
-      'Done': 'closed'
+      'Resolved': 'resolved'
     };
 
     // Ensure that the status is mapped to the correct backend value
@@ -126,7 +126,7 @@ const EditIssue = () => {
             >
               <option value="open">To Do</option>
               <option value="in_progress">In Progress</option>
-              <option value="closed">Done</option>
+              <option value="resolved">Done</option>
             </select>
           </div>
 

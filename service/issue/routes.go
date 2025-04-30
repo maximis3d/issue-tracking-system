@@ -27,7 +27,6 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/issue/{id}", h.handleGetIssueById).Methods("GET")
 
 	router.HandleFunc("/issues/{key}", h.handleGetIssuesByProject).Methods("GET")
-
 }
 
 func (h *Handler) handleCreateIssue(w http.ResponseWriter, r *http.Request) {
@@ -109,7 +108,6 @@ func (h *Handler) handleUpdateIssue(w http.ResponseWriter, r *http.Request) {
 		"message": "Issue updated successfully",
 		"issue":   issue,
 	})
-
 }
 
 func (h *Handler) handleGetIssuesByProject(w http.ResponseWriter, r *http.Request) {
@@ -154,10 +152,13 @@ func (h *Handler) handleGetIssueById(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("issue not found"))
+		return
 	}
 
+	// Adding cycle time to the response
 	utils.WriteJSON(w, http.StatusOK, map[string]any{
-		"message": "Issue fetched successfully",
-		"issue":   issue,
+		"message":   "Issue fetched successfully",
+		"issue":     issue,
+		"cycleTime": issue.CycleTime,
 	})
 }

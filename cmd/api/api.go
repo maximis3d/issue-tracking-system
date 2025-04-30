@@ -11,6 +11,7 @@ import (
 	"github.com/maximis3d/issue-tracking-system/service/project"
 	projectassignment "github.com/maximis3d/issue-tracking-system/service/project_assignment"
 	projectscopes "github.com/maximis3d/issue-tracking-system/service/project_scopes"
+	"github.com/maximis3d/issue-tracking-system/service/sprints"
 	"github.com/maximis3d/issue-tracking-system/service/standups"
 	"github.com/maximis3d/issue-tracking-system/service/user"
 )
@@ -54,6 +55,10 @@ func (s *APIServer) Run() error {
 	projectAssignmentStore := projectassignment.NewStore(s.db)
 	projectassignmentHandler := projectassignment.NewHandler((projectAssignmentStore))
 	projectassignmentHandler.RegisterRoutes(subrouter)
+
+	sprintsStore := sprints.NewStore(s.db)
+	sprintsHandler := sprints.NewHandler(sprintsStore)
+	sprintsHandler.RegisterRoutes(subrouter)
 
 	// Enable CORS
 	corsHandler := handlers.CORS(
