@@ -1,16 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { createScope } from "../api/scope";// Adjust the path to your API file
+import { createScope } from "../api/scope"; 
+import { fetchAllProjects } from "../api/project"; 
+import Select from "react-select"; 
 
-const RegisterScope = () => {
+const CreateScope = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [projectKeys, setProjectKeys] = useState("");
+  const [selectedProjects, setSelectedProjects] = useState([]);
+  const [projects, setProjects] = useState([]); 
   const [_, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const getProjects = async () => {
+      try {
+        const projectsData = await fetchAllProjects();
+        setProjects(projectsData);
+      } catch (error) {
+        setMessage(`Failed to load projects: ${error}`);
+      }
+    };
+    getProjects();
+  }, []);
+
+  const projectOptions = projects.map((project) => ({
+    value: project.id,
+    label: `${project.name} (${project.project_key})`,
+  }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,12 +38,14 @@ const RegisterScope = () => {
     setLoading(true);
 
     try {
-      const projects = projectKeys
-        .split(",")
-        .map((p) => p.trim())
-        .filter((p) => p.length > 0);
+      const projectKeys = selectedProjects
+        .map((id) => {
+          const project = projects.find((p) => p.id === id);
+          return project?.project_key;
+        })
+        .filter(Boolean);
 
-      await createScope(name, description, projects);
+      await createScope(name, description, projectKeys);
       setMessage("Scope successfully created.");
       setTimeout(() => navigate("/scopes"), 1200);
     } catch (error) {
@@ -36,9 +58,7 @@ const RegisterScope = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8 border border-gray-200 w-full">
-        <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">
-          Register New Scope
-        </h2>
+        <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">Register New Scope</h2>
 
         {message && (
           <div
@@ -53,6 +73,7 @@ const RegisterScope = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Scope Name */}
           <div className="flex flex-col">
             <label htmlFor="name" className="mb-2 font-medium text-gray-700">
               Scope Name
@@ -69,6 +90,7 @@ const RegisterScope = () => {
             />
           </div>
 
+          {/* Description */}
           <div className="flex flex-col">
             <label htmlFor="description" className="mb-2 font-medium text-gray-700">
               Description
@@ -85,24 +107,31 @@ const RegisterScope = () => {
             />
           </div>
 
+          {/* Searchable Multi-select Project Dropdown */}
           <div className="flex flex-col">
-            <label htmlFor="projectKeys" className="mb-2 font-medium text-gray-700">
-              Project Keys (comma-separated)
+            <label htmlFor="projects" className="mb-2 font-medium text-gray-700">
+              Select Projects
             </label>
-            <input
-              id="projectKeys"
-              type="text"
-              value={projectKeys}
-              onChange={(e) => setProjectKeys(e.target.value)}
-              placeholder="e.g. PROJ1, PROJ2, PROJ3"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={loading}
+            <Select
+              id="projects"
+              isMulti
+              options={projectOptions}
+              value={projectOptions.filter((option) =>
+                selectedProjects.includes(option.value)
+              )}
+              onChange={(selectedOptions) => {
+                setSelectedProjects(selectedOptions.map((option) => option.value));
+              }}
+              className="w-full"
+              isDisabled={loading}
+              placeholder="Select projects..."
             />
             <span className="text-xs text-gray-400 mt-1">
-              Enter the project keys separated by commas.
+              You can select multiple projects.
             </span>
           </div>
 
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
@@ -120,4 +149,4 @@ const RegisterScope = () => {
   );
 };
 
-export default RegisterScope;
+export default CreateScope;
