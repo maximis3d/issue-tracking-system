@@ -80,3 +80,19 @@ func (s *Store) GetAllUsers() ([]types.User, error) {
 	return users, nil
 
 }
+
+// IsUserAssignedToProject - Check if a user is already assigned to a project
+func (s *Store) IsUserAssignedToProject(projectID int, userID int) (bool, error) {
+	query := `
+        SELECT COUNT(*)
+        FROM project_assignments
+        WHERE project_id = ? AND user_id = ?
+    `
+	var count int
+	err := s.db.QueryRow(query, projectID, userID).Scan(&count)
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
+}

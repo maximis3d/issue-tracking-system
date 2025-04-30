@@ -62,36 +62,6 @@ func (h *Handler) handleAssignUser(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusOK, map[string]string{"message": "User assigned to project successfully"})
 }
 
-// handleRemoveUser removes a user from a project.
-func (h *Handler) handleRemoveUser(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-
-	// Convert projectID and userID string to int
-	projectIDStr := vars["projectID"]
-	userIDStr := vars["userID"]
-
-	projectID, err := strconv.Atoi(projectIDStr)
-	if err != nil {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid projectID: %v", err))
-		return
-	}
-
-	userID, err := strconv.Atoi(userIDStr)
-	if err != nil {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid userID: %v", err))
-		return
-	}
-
-	// Attempt to remove the user from the project
-	if err := h.store.RemoveUserFromProject(projectID, userID); err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to remove user from project: %v", err))
-		return
-	}
-
-	// Success response
-	utils.WriteJSON(w, http.StatusOK, map[string]string{"message": "User removed from project successfully"})
-}
-
 // handleGetAssignedUsers retrieves all users assigned to a project.
 func (h *Handler) handleGetAssignedUsers(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -128,4 +98,46 @@ func (h *Handler) handleGetAllUsers(w http.ResponseWriter, r *http.Request) {
 		"users":   users,
 	})
 
+}
+
+func (h *Handler) handleRemoveUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	// Convert projectID and userID string to int
+	projectIDStr := vars["projectID"]
+	userIDStr := vars["userID"]
+
+	projectID, err := strconv.Atoi(projectIDStr)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid projectID: %v", err))
+		return
+	}
+
+	userID, err := strconv.Atoi(userIDStr)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid userID: %v", err))
+		return
+	}
+
+	// Check if the user is assigned to the project
+	assigned, err := h.store.IsUserAssignedToProject(projectID, userID)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to check user assignment: %v", err))
+		return
+	}
+
+	if !assigned {
+		// If user is not assigned to the project, return an error
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("user not assigned to project"))
+		return
+	}
+
+	// Attempt to remove the user from the project
+	if err := h.store.RemoveUserFromProject(projectID, userID); err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to remove user from project: %v", err))
+		return
+	}
+
+	// Success response
+	utils.WriteJSON(w, http.StatusOK, map[string]string{"message": "User removed from project successfully"})
 }

@@ -31,3 +31,19 @@ export const assignUserToProject = async ({ projectId, userId, role = "member" }
         throw error;
     }
 };
+
+export const removeUserFromProject = async ({ userId, projectId }) => {
+    try {
+        const response = await fetch(`/api/projects/${projectId}/users/${userId}`, {
+            method: "DELETE",
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to remove user from project");
+        }
+
+        return await response.json(); // Return response after successful removal
+    } catch (error) {
+        throw new Error(error.message || "Error while removing user from project");
+    }
+}
