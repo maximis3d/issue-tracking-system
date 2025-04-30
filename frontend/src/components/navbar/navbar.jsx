@@ -1,8 +1,15 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import Dropdown from "../dropDown/dropDown";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  
+  const [openDropdown, setOpenDropdown] = useState(null);
+
+  const handleDropdownToggle = (index) => {
+    setOpenDropdown(prev => (prev === index ? null : index));
+  };
 
   const projectOptions = [
     { label: "All Projects", onClick: () => navigate("/projects") },
@@ -16,22 +23,43 @@ export default function Navbar() {
 
   const userOptions = [
     { label: "Assign Users", onClick: () => navigate("/assign-user") },
-  ]
+  ];
+
   const scopeOptions = [
-    {label: "All Scopes", onClick: () => navigate("/scopes")},
-    {label: "Create Scope", onClick: () => navigate("/create-scope")},
-  ]
+    { label: "All Scopes", onClick: () => navigate("/scopes") },
+    { label: "Create Scope", onClick: () => navigate("/create-scope") },
+    { label: "Edit Scope", onClick: () => navigate("/edit-scope") }
+  ];
 
   return (
     <nav className="flex items-center justify-between px-6 py-4 shadow-sm bg-white">
       <div className="flex items-center space-x-6">
         <div className="text-xl font-bold">Agile Tracker</div>
 
-        <Dropdown label="Projects" options={projectOptions} />
-        <Dropdown label="Issues" options={issueOptions} />
-        <Dropdown label="Users" options={userOptions} />
-        <Dropdown label="Scopes" options={scopeOptions} />
-
+        <Dropdown
+          label="Projects"
+          options={projectOptions}
+          isOpen={openDropdown === 0}
+          onToggle={() => handleDropdownToggle(0)}
+        />
+        <Dropdown
+          label="Issues"
+          options={issueOptions}
+          isOpen={openDropdown === 1}
+          onToggle={() => handleDropdownToggle(1)}
+        />
+        <Dropdown
+          label="Users"
+          options={userOptions}
+          isOpen={openDropdown === 2}
+          onToggle={() => handleDropdownToggle(2)}
+        />
+        <Dropdown
+          label="Scopes"
+          options={scopeOptions}
+          isOpen={openDropdown === 3}
+          onToggle={() => handleDropdownToggle(3)}
+        />
       </div>
 
       {/* Right Section: Auth buttons */}
