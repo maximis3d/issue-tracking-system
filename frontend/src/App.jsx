@@ -13,6 +13,7 @@ import EditIssue from "./pages/EditIssue";
 import ProjectAssignment from "./pages/ProjectAssignment";
 import Scope from "./pages/Scope";
 import Scopes from "./pages/Scopes";
+import CreateScope from "./pages/CreateScope";
 
 function App() {
   return (
@@ -31,7 +32,8 @@ function App() {
         <Route path="/issues/:id/edit" element={<EditIssue />} />
         <Route path="/assign-user" element={<ProjectAssignment />} />
         <Route path="/scope/:id" element={<Scope />} />
-        <Route path="/scopes" element={<Scopes />} />        
+        <Route path="/scopes" element={<Scopes />} />
+        <Route path="/create-scope" element={<CreateScope />} />        
       </Routes>
     </Router>
   );

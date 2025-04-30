@@ -24,14 +24,35 @@ export const fetchScopeIssues = async (scopeId) => {
 };
 
 export const fetchAllScopeDetails = async () => {
-  try{
+  try {
     const response = await fetch(`http://localhost:8080/api/v1/scopes`)
     if (!response.ok) {
       throw new Error("Failed to fetch all scope details")
     }
     const data = await response.json()
     return data.scopes
-  } catch (error){
+  } catch (error) {
     throw new Error(`Error fetching scopes: ${error.message}`);
   }
 }
+
+export const createScope = async (name, description, projects) => {
+  try {
+    const response = await fetch("http://localhost:8080/api/v1/scopes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name, description, projects }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to create scope");
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw new Error(`Error creating scope: ${error.message}`);
+  }
+};
