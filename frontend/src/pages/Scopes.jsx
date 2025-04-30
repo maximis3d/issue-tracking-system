@@ -59,7 +59,7 @@ const Scopes = () => {
                 <h2 className="text-xl font-semibold mb-2">{scope.name}</h2>
                 <p className="text-sm text-gray-600 mb-2">{scope.description}</p>
                 <p className="text-sm text-gray-500">
-                  Created: {new Date(scope.created_at).toLocaleDateString()}
+                  Created: {new Date(scope.createdAt).toLocaleDateString()}
                 </p>
               </div>
             ))
