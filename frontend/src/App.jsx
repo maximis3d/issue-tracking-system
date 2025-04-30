@@ -15,6 +15,7 @@ import Scope from "./pages/Scope";
 import Scopes from "./pages/Scopes";
 import CreateScope from "./pages/CreateScope";
 import EditScope from "./pages/ScopeEdit";
+import CycleTime from "./pages/CycleTime";
 
 function App() {
   return (
@@ -35,7 +36,8 @@ function App() {
         <Route path="/scope/:id" element={<Scope />} />
         <Route path="/scopes" element={<Scopes />} />
         <Route path="/create-scope" element={<CreateScope />} />
-        <Route path="/edit-scope" element={<EditScope />} />       
+        <Route path="/edit-scope" element={<EditScope />} />  
+        <Route path="/cycle-time" element={<CycleTime />} />        
       </Routes>
     </Router>
   );

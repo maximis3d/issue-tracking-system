@@ -31,7 +31,7 @@ const Scope = () => {
   const statusMapping = {
     open: "To Do",
     in_progress: "In Progress",
-    closed: "Done",
+    resolved: "Done",
   };
 
   const groupedIssues = issues.reduce((acc, issue) => {
