@@ -22,6 +22,7 @@ func NewHandler(store types.ScopeStore) *Handler {
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/scopes", h.handleCreateScope).Methods("POST")
 	router.HandleFunc("/scopes/{id}", h.handleAddProject).Methods("POST")
+	router.HandleFunc("/scopes/{id}", h.handleRemoveProjects).Methods("DELETE")
 	router.HandleFunc("/scopes/issues/{id}", h.handleGetIssuesByScope).Methods("GET")
 	router.HandleFunc("/scopes/details/{id}", h.handleGetScopeDetails).Methods("GET")
 	router.HandleFunc("/scopes", h.handleGetAllScopeDetails).Methods("GET")
@@ -137,5 +138,43 @@ func (h *Handler) handleGetAllScopeDetails(w http.ResponseWriter, r *http.Reques
 	utils.WriteJSON(w, http.StatusOK, map[string]any{
 		"message": "Scopes successfully retrieved",
 		"scopes":  scopes,
+	})
+}
+
+func (h *Handler) handleRemoveProjects(w http.ResponseWriter, r *http.Request) {
+	var payload struct {
+		ProjectKeys []string `json:"project_keys" validate:"required,min=1"`
+	}
+
+	if err := utils.ParseJSON(r, &payload); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err := utils.Validate.Struct(payload); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
+		return
+	}
+
+	vars := mux.Vars(r)
+	scopeIDStr := vars["id"]
+	scopeID, err := strconv.Atoi(scopeIDStr)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid scope ID: %v", err))
+		return
+	}
+
+	for _, projectKey := range payload.ProjectKeys {
+		err = h.store.RemoveProjectFromScope(scopeID, projectKey)
+		if err != nil {
+			utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to remove project %s from scope: %v", projectKey, err))
+			return
+		}
+	}
+
+	// Send success response
+	utils.WriteJSON(w, http.StatusOK, map[string]string{
+		"message": "Projects removed from scope successfully",
 	})
 }

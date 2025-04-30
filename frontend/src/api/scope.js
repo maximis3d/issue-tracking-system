@@ -56,3 +56,43 @@ export const createScope = async (name, description, projects) => {
     throw new Error(`Error creating scope: ${error.message}`);
   }
 };
+
+
+// Function to fetch all scopes
+export const fetchAllScopes = async () => {
+  try {
+    const response = await fetch("http://localhost:8080/api/v1/scopes");
+    if (!response.ok) {
+      throw new Error("Failed to fetch scopes");
+    }
+    const data = await response.json();
+    return data.scopes;
+  } catch (error) {
+    throw new Error(`Error fetching scopes: ${error.message}`);
+  }
+};
+
+
+// Function to remove projects from a scope
+export const removeProjectsFromScope = async (scopeId, projectKeys) => {
+  try {
+    const response = await fetch(`http://localhost:8080/api/v1/scopes/${scopeId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        project_keys: projectKeys,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to remove projects");
+    }
+
+    return await response.json(); // Return the response on successful deletion
+  } catch (error) {
+    throw new Error(`Error removing projects from scope: ${error.message}`);
+  }
+};

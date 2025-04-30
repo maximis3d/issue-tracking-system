@@ -14,6 +14,7 @@ import ProjectAssignment from "./pages/ProjectAssignment";
 import Scope from "./pages/Scope";
 import Scopes from "./pages/Scopes";
 import CreateScope from "./pages/CreateScope";
+import EditScope from "./pages/ScopeEdit";
 
 function App() {
   return (
@@ -33,7 +34,8 @@ function App() {
         <Route path="/assign-user" element={<ProjectAssignment />} />
         <Route path="/scope/:id" element={<Scope />} />
         <Route path="/scopes" element={<Scopes />} />
-        <Route path="/create-scope" element={<CreateScope />} />        
+        <Route path="/create-scope" element={<CreateScope />} />
+        <Route path="/edit-scope" element={<EditScope />} />       
       </Routes>
     </Router>
   );

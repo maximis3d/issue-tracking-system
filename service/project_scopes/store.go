@@ -144,3 +144,12 @@ func (s *Store) GetAllScopeDetails() ([]types.Scope, error) {
 	}
 	return scopes, nil
 }
+
+func (s *Store) RemoveProjectFromScope(scopeID int, projectKey string) error {
+	_, err := s.db.Exec(`
+		DELETE FROM project_scope WHERE scope_id = ? AND project_key = ?`, scopeID, projectKey)
+	if err != nil {
+		return fmt.Errorf("failed to remove project from scope: %v", err)
+	}
+	return nil
+}
