@@ -44,7 +44,7 @@ const ProjectDetails = () => {
   const statusMapping = {
     open: "To Do",
     in_progress: "In Progress",
-    closed: "Done",
+    resolved: "Done",
   };
 
   // Group issues by their mapped status
