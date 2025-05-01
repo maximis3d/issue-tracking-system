@@ -18,3 +18,15 @@ export const fetchIssue = async (id) => {
     throw new Error(err.message)
   }
 }
+
+// ../api/issues.js
+export const fetchIssuesByProject = async (projectKey) => {
+  try {
+    const res = await fetch(`http://localhost:8080/api/v1/issues/${projectKey}`)
+    const data = await res.json()
+    return data
+  } catch (error) {
+    throw new Error(error)
+
+  }
+}

@@ -27,6 +27,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/issue/{id}", h.handleGetIssueById).Methods("GET")
 
 	router.HandleFunc("/issues/{key}", h.handleGetIssuesByProject).Methods("GET")
+	router.HandleFunc("/cycle-time/{project_key}", h.handleGetAverageCycleTime).Methods("GET")
 }
 
 func (h *Handler) handleCreateIssue(w http.ResponseWriter, r *http.Request) {
@@ -160,5 +161,37 @@ func (h *Handler) handleGetIssueById(w http.ResponseWriter, r *http.Request) {
 		"message":   "Issue fetched successfully",
 		"issue":     issue,
 		"cycleTime": issue.CycleTime,
+	})
+}
+
+func (h *Handler) handleGetAverageCycleTime(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	projectKey := vars["project_key"]
+	if projectKey == "" {
+		http.Error(w, "Missing project_key", http.StatusBadRequest)
+		return
+	}
+
+	avgCycleTime, err := h.store.GetAverageCycleTime(projectKey)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to get average cycle time: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	type response struct {
+		ProjectKey      string  `json:"project_key"`
+		AverageSeconds  float64 `json:"average_seconds"`
+		AverageDuration string  `json:"average_duration"`
+	}
+
+	resp := response{
+		ProjectKey:      projectKey,
+		AverageSeconds:  avgCycleTime.Seconds(),
+		AverageDuration: avgCycleTime.String(),
+	}
+
+	utils.WriteJSON(w, http.StatusOK, map[string]any{
+		"message":   "Average cycle time fetched successfully",
+		"cycleTime": resp,
 	})
 }

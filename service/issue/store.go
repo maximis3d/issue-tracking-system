@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/maximis3d/issue-tracking-system/types"
 )
@@ -140,7 +141,7 @@ func (s *Store) GetIssueByID(id int) (*types.Issue, error) {
 }
 
 func (s *Store) GetIssuesByProject(projectKey string) ([]types.Issue, error) {
-	rows, err := s.db.Query("SELECT id, `key`, summary, description, project_key, reporter, assignee, status, issueType, updatedAt FROM issues WHERE project_key=?", projectKey)
+	rows, err := s.db.Query("SELECT id, `key`, summary, description, project_key, reporter, assignee, status, issueType, updatedAt, started_at, finished_at FROM issues WHERE project_key=?", projectKey)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query issues: %v", err)
 	}
@@ -161,9 +162,15 @@ func (s *Store) GetIssuesByProject(projectKey string) ([]types.Issue, error) {
 			&i.Status,
 			&i.IssueType,
 			&i.UpdatedAt,
+			&i.StartedAt,
+			&i.FinishedAt,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan issue row: %v", err)
+		}
+		if i.StartedAt.Valid && i.FinishedAt.Valid {
+			duration := i.FinishedAt.Time.Sub(i.StartedAt.Time)
+			i.CycleTime = duration.String()
 		}
 		issues = append(issues, i)
 	}
@@ -173,4 +180,39 @@ func (s *Store) GetIssuesByProject(projectKey string) ([]types.Issue, error) {
 	}
 
 	return issues, nil
+}
+
+func (s *Store) GetAverageCycleTime(projectKey string) (time.Duration, error) {
+	query := `
+		SELECT started_at, finished_at 
+		FROM issues 
+		WHERE project_key = ? 
+		AND started_at IS NOT NULL 
+		AND finished_at IS NOT NULL
+	`
+
+	rows, err := s.db.Query(query, projectKey)
+	if err != nil {
+		return 0, fmt.Errorf("failed to fetch issue cycle times: %v", err)
+	}
+	defer rows.Close()
+
+	var totalDuration time.Duration
+	var count int
+
+	for rows.Next() {
+		var startedAt, finishedAt time.Time
+		if err := rows.Scan(&startedAt, &finishedAt); err != nil {
+			return 0, fmt.Errorf("failed to scan row: %v", err)
+		}
+		totalDuration += finishedAt.Sub(startedAt)
+		count++
+	}
+
+	if count == 0 {
+		return 0, fmt.Errorf("no completed issues with valid cycle time for project %s", projectKey)
+	}
+
+	average := totalDuration / time.Duration(count)
+	return average, nil
 }

@@ -19,7 +19,7 @@ const CreateScope = () => {
     const getProjects = async () => {
       try {
         const projectsData = await fetchAllProjects();
-        setProjects(projectsData);
+        setProjects(projectsData.projects);
       } catch (error) {
         setMessage(`Failed to load projects: ${error}`);
       }
