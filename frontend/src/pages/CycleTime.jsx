@@ -14,6 +14,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import ExcelExportButton from "../components/excelExport/excelExport";  // Import the ExcelExportButton
 
 const CycleTime = () => {
   const [selectedProject, setSelectedProject] = useState(null);
@@ -123,6 +124,20 @@ const CycleTime = () => {
 
             {issues.length > 0 && (
               <>
+                {/* Excel Export Button */}
+                <div className="flex justify-end mb-4 text-black">
+                  <ExcelExportButton
+                    data={issues.map((issue) => ({
+                      Key: issue.key,
+                      Summary: issue.summary,
+                      Status: issue.status,
+                      "Cycle Time (Days)": issue.cycle_time || "N/A",
+                    }))}
+                    fileName="CycleTime_Data"
+                    sheetName="Cycle Time Issues"
+                  />
+                </div>
+
                 <h3 className="text-xl font-semibold mb-4 text-gray-800">Resolved Issues</h3>
                 <ul className="space-y-4 mb-8">
                   {issues.map((issue) => (
