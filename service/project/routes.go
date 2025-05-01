@@ -31,7 +31,10 @@ func (h *Handler) handleGetProjects(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("no projects found"))
 		return
 	}
-	utils.WriteJSON(w, http.StatusOK, projects)
+	utils.WriteJSON(w, http.StatusOK, map[string]any{
+		"message":  "Projects Successfully retrieved.",
+		"projects": projects,
+	})
 }
 
 func (h *Handler) handleGetProjectByKey(w http.ResponseWriter, r *http.Request) {

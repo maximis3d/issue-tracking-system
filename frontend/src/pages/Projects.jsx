@@ -16,7 +16,7 @@ const Projects = () => {
         return res.json();
       })
       .then((data) => {
-        setProjects(data);
+        setProjects(data.projects || []);
         setLoading(false);
       })
       .catch((err) => {
