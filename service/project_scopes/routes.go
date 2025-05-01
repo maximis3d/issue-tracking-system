@@ -88,25 +88,27 @@ func (h *Handler) handleAddProject(w http.ResponseWriter, r *http.Request) {
 		"message": "project added to scope successfully",
 	})
 }
-
 func (h *Handler) handleGetIssuesByScope(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	id := vars["id"]
 	scopeId, err := strconv.Atoi(id)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid scope ID: %v", err))
+		return
+	}
 
 	issues, err := h.store.GetIssuesByScope(scopeId)
 
 	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("cannot retrive issues %v", err))
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("cannot retrieve issues: %v", err))
 		return
 	}
 
 	utils.WriteJSON(w, http.StatusOK, map[string]any{
-		"message": "Issues Successfully Retrieved",
+		"message": "Issues successfully retrieved",
 		"issues":  issues,
 	})
-
 }
 
 func (h *Handler) handleGetScopeDetails(w http.ResponseWriter, r *http.Request) {
