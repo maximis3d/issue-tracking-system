@@ -153,7 +153,7 @@ func (h *Handler) handleGetIssueById(w http.ResponseWriter, r *http.Request) {
 	issue, err := h.store.GetIssueByID(issueID)
 
 	if err != nil {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("issue not found"))
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("issue not found"))
 		return
 	}
 

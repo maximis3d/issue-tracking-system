@@ -84,6 +84,7 @@ type IssuePayload struct {
 	IssueType   string `json:"issueType" validate:"required"`
 	SprintID    int    `json:"sprint_id"`
 }
+
 type IssueUpdatePayload struct {
 	Summary     *string `json:"summary,omitempty"`
 	Description *string `json:"description,omitempty"`
