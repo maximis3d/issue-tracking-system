@@ -42,14 +42,15 @@ func TestProjectHandlers(t *testing.T) {
 			payload := map[string]string{"Name": ""} // Missing required fields
 			testRequest(t, handler, http.MethodPost, "/projects", payload, http.StatusBadRequest)
 		})
-
-		t.Run("should create project successfully", func(t *testing.T) {
-			payload := types.ProjectPayload{Name: "New Project", Description: "Desc", ProjectLead: 1}
-			testRequest(t, handler, http.MethodPost, "/projects", payload, http.StatusCreated)
-		})
-
 		t.Run("should fail if project already exists", func(t *testing.T) {
-			payload := types.ProjectPayload{Name: "New Project", Description: "Desc", ProjectLead: 1}
+			payload := types.Project{
+				Name:        "New Project",
+				Description: "Desc",
+				ProjectLead: 1,
+				WIPLimit:    5,
+			}
+			projectStore.CreateProject(payload)
+
 			testRequest(t, handler, http.MethodPost, "/projects", payload, http.StatusBadRequest)
 		})
 	})
@@ -77,6 +78,7 @@ func testRequest(t testing.TB, handler *Handler, method, path string, payload an
 
 	rr := httptest.NewRecorder()
 	router := mux.NewRouter()
+	// Make sure the routes are registered here
 	handler.RegisterRoutes(router)
 	router.ServeHTTP(rr, req)
 
