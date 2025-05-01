@@ -28,6 +28,7 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 
 	router.HandleFunc("/issues/{key}", h.handleGetIssuesByProject).Methods("GET")
 	router.HandleFunc("/cycle-time/{project_key}", h.handleGetAverageCycleTime).Methods("GET")
+	router.HandleFunc("/throughput/{project_key}", h.handleGetWeeklyThroughput).Methods("GET")
 }
 
 func (h *Handler) handleCreateIssue(w http.ResponseWriter, r *http.Request) {
@@ -193,5 +194,25 @@ func (h *Handler) handleGetAverageCycleTime(w http.ResponseWriter, r *http.Reque
 	utils.WriteJSON(w, http.StatusOK, map[string]any{
 		"message":   "Average cycle time fetched successfully",
 		"cycleTime": resp,
+	})
+}
+
+func (h *Handler) handleGetWeeklyThroughput(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	projectKey := vars["project_key"]
+	if projectKey == "" {
+		http.Error(w, "Missing project_key", http.StatusBadRequest)
+		return
+	}
+
+	data, err := h.store.GetWeeklyThroughput(projectKey)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to get throughput: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, map[string]any{
+		"message":    "Weekly throughput fetched successfully",
+		"throughput": data,
 	})
 }

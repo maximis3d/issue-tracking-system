@@ -30,6 +30,11 @@ export default function Navbar() {
     { label: "Create Scope", onClick: () => navigate("/create-scope") },
     { label: "Edit Scope", onClick: () => navigate("/edit-scope") }
   ];
+  
+  const metricOptions = [
+    {label: "Cycle Time", onClick: () => navigate("/cycle-time")},
+    {label: "Throughput", onClick: () => navigate("/throughput")}
+  ]
 
   return (
     <nav className="flex items-center justify-between px-6 py-4 shadow-sm bg-white">
@@ -59,6 +64,12 @@ export default function Navbar() {
           options={scopeOptions}
           isOpen={openDropdown === 3}
           onToggle={() => handleDropdownToggle(3)}
+        />
+        <Dropdown
+          label="Metrics"
+          options={metricOptions}
+          isOpen={openDropdown === 4}
+          onToggle={() => handleDropdownToggle(4)}
         />
       </div>
 

@@ -216,3 +216,39 @@ func (s *Store) GetAverageCycleTime(projectKey string) (time.Duration, error) {
 	average := totalDuration / time.Duration(count)
 	return average, nil
 }
+
+func (s *Store) GetWeeklyThroughput(projectKey string) (map[string]int, error) {
+	query := `
+		SELECT 
+			DATE_FORMAT(finished_at, '%Y-%u') AS week,
+			COUNT(*) AS completed
+		FROM issues
+		WHERE 
+			project_key = ? 
+			AND finished_at IS NOT NULL
+		GROUP BY week
+		ORDER BY week ASC
+	`
+
+	rows, err := s.db.Query(query, projectKey)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch weekly throughput: %v", err)
+	}
+	defer rows.Close()
+
+	throughput := make(map[string]int)
+	for rows.Next() {
+		var week string
+		var count int
+		if err := rows.Scan(&week, &count); err != nil {
+			return nil, fmt.Errorf("failed to scan throughput row: %v", err)
+		}
+		throughput[week] = count
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error while iterating throughput rows: %v", err)
+	}
+
+	return throughput, nil
+}

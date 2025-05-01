@@ -16,6 +16,7 @@ import Scopes from "./pages/Scopes";
 import CreateScope from "./pages/CreateScope";
 import EditScope from "./pages/ScopeEdit";
 import CycleTime from "./pages/CycleTime";
+import Throughput from "./pages/Throughput";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         <Route path="/create-scope" element={<CreateScope />} />
         <Route path="/edit-scope" element={<EditScope />} />  
         <Route path="/cycle-time" element={<CycleTime />} />        
+        <Route path="/throughput" element={<Throughput />} />   
       </Routes>
     </Router>
   );

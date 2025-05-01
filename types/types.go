@@ -101,6 +101,7 @@ type IssueStore interface {
 	GetIssueByID(id int) (*Issue, error)
 	GetIssuesByProject(projectKey string) ([]Issue, error)
 	GetAverageCycleTime(projectKey string) (time.Duration, error)
+	GetWeeklyThroughput(projectKey string) (map[string]int, error)
 }
 
 type Standup struct {
