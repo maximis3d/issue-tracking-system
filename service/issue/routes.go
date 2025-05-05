@@ -71,14 +71,12 @@ func (h *Handler) handleUpdateIssue(w http.ResponseWriter, r *http.Request) {
 
 	if err := utils.ParseJSON(r, &issue); err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
-		fmt.Println("Error parsing JSON:", err)
 		return
 	}
 
 	if err := utils.Validate.Struct(issue); err != nil {
 		errors := err.(validator.ValidationErrors)
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
-		fmt.Println("Validation errors:", errors)
 		return
 	}
 
@@ -86,23 +84,20 @@ func (h *Handler) handleUpdateIssue(w http.ResponseWriter, r *http.Request) {
 	id := vars["id"]
 	issueID, err := strconv.Atoi(id)
 	if err != nil {
-		fmt.Println("Error converting ID:", err)
 		http.Error(w, "Invalid issue ID", http.StatusBadRequest)
 		return
 	}
 
 	existingIssue, err := h.store.GetIssueByID(issueID)
 	if err != nil {
-		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("issue not found"))
-		fmt.Println(err)
+		utils.WriteError(w, http.StatusNotFound, err)
 		return
 	}
 
 	issue.ID = existingIssue.ID
 
 	if err := h.store.UpdateIssue(issue); err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to update issue"))
-		fmt.Println(err)
+		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -123,11 +118,9 @@ func (h *Handler) handleGetIssuesByProject(w http.ResponseWriter, r *http.Reques
 		if errors.Is(err, sql.ErrNoRows) {
 			// No issues found for the provided project key
 			utils.WriteError(w, http.StatusNotFound, fmt.Errorf("no issues found for project %s", projectKey))
-			fmt.Println("No issues found for project:", projectKey)
 		} else {
 			// An error occurred while fetching the issues
 			utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("failed to fetch issues for project %s: %v", projectKey, err))
-			fmt.Println("Error fetching issues for project:", projectKey, err)
 		}
 		return
 	}

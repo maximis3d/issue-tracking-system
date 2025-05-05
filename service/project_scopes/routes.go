@@ -65,7 +65,6 @@ func (h *Handler) handleAddProject(w http.ResponseWriter, r *http.Request) {
 	if err := utils.Validate.Struct(payload); err != nil {
 		errors := err.(validator.ValidationErrors)
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
-		fmt.Println("Validation errors:", errors)
 		return
 	}
 
@@ -73,7 +72,6 @@ func (h *Handler) handleAddProject(w http.ResponseWriter, r *http.Request) {
 	id := vars["id"]
 	scopeID, err := strconv.Atoi(id)
 	if err != nil {
-		fmt.Println("Error converting ID:", err)
 		http.Error(w, "Invalid scope ID", http.StatusBadRequest)
 		return
 	}

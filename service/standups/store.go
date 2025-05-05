@@ -3,7 +3,6 @@ package standups
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"github.com/maximis3d/issue-tracking-system/types"
 )
@@ -81,7 +80,6 @@ func (s *Store) FilterTickets(project types.Project) ([]types.Issue, error) {
 	}
 
 	var rows *sql.Rows
-	fmt.Println("Last End Time:", lastEndTime)
 
 	if lastEndTime.Valid {
 		rows, err = s.db.Query("SELECT id, `key`, summary, reporter, assignee, status, issueType FROM issues WHERE project_key = ? AND updatedAt > ?", project.ProjectKey, lastEndTime.Time)
