@@ -1,3 +1,4 @@
+mysqldump: [Warning] Using a password on the command line interface can be insecure.
 -- MySQL dump 10.13  Distrib 8.0.42, for Linux (x86_64)
 --
 -- Host: localhost    Database: issue_tracking_system
@@ -35,13 +36,15 @@ CREATE TABLE `issues` (
   `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `sprint_id` int unsigned DEFAULT NULL,
+  `started_at` timestamp NULL DEFAULT NULL,
+  `finished_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `key` (`key`),
   KEY `project_key` (`project_key`),
   KEY `fk_issues_sprint` (`sprint_id`),
   CONSTRAINT `fk_issues_sprint` FOREIGN KEY (`sprint_id`) REFERENCES `sprints` (`id`) ON DELETE SET NULL,
   CONSTRAINT `issues_ibfk_1` FOREIGN KEY (`project_key`) REFERENCES `projects` (`project_key`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -50,7 +53,7 @@ CREATE TABLE `issues` (
 
 LOCK TABLES `issues` WRITE;
 /*!40000 ALTER TABLE `issues` DISABLE KEYS */;
-INSERT INTO `issues` VALUES (1,'TP8-001','test summary','test descriptions','TP8','john.doe@example.com','jane.doe@example.com','open','bug','2025-04-15 16:38:17','2025-04-15 16:38:17',NULL),(3,'TP7-001','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','open','bug','2025-04-15 16:41:26','2025-04-15 16:41:26',NULL),(4,'TP7-002','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','open','bug','2025-04-27 15:28:36','2025-04-28 16:32:02',NULL),(5,'TP7-003','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-27 16:28:24','2025-04-27 16:28:24',NULL),(6,'TP7-004','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-27 16:28:48','2025-04-27 16:28:48',NULL),(7,'TP7-005','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-27 18:24:03','2025-04-27 18:24:03',NULL),(8,'TP7-006','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-28 10:59:44','2025-04-28 10:59:44',NULL),(9,'TP7-007','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-28 14:02:45','2025-04-28 14:02:45',NULL),(10,'TP7-008','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-28 14:03:00','2025-04-28 14:03:00',NULL),(11,'TP7-009','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-30 18:53:13','2025-04-30 18:53:13',NULL),(12,'TP7-010','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-30 18:53:35','2025-04-30 18:53:35',NULL),(13,'TP7-011','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-30 18:58:07','2025-04-30 18:58:07',NULL);
+INSERT INTO `issues` VALUES (1,'TP8-001','test summary','test descriptions','TP8','john.doe@example.com','jane.doe@example.com','open','bug','2025-04-15 16:38:17','2025-04-15 16:38:17',NULL,NULL,NULL),(3,'TP7-001','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','open','bug','2025-04-15 16:41:26','2025-04-15 16:41:26',NULL,NULL,NULL),(4,'TP7-002','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','open','bug','2025-04-27 15:28:36','2025-04-28 16:32:02',NULL,NULL,NULL),(5,'TP7-003','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-27 16:28:24','2025-04-27 16:28:24',NULL,NULL,NULL),(6,'TP7-004','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-27 16:28:48','2025-04-27 16:28:48',NULL,NULL,NULL),(7,'TP7-005','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-27 18:24:03','2025-04-27 18:24:03',NULL,NULL,NULL),(8,'TP7-006','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-28 10:59:44','2025-04-28 10:59:44',NULL,NULL,NULL),(9,'TP7-007','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-28 14:02:45','2025-04-28 14:02:45',NULL,NULL,NULL),(10,'TP7-008','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-28 14:03:00','2025-04-28 14:03:00',NULL,NULL,NULL),(11,'TP7-009','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-30 18:53:13','2025-04-30 18:53:13',NULL,NULL,NULL),(12,'TP7-010','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-30 18:53:35','2025-04-30 18:53:35',NULL,NULL,NULL),(13,'TP7-011','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-30 18:58:07','2025-04-30 18:58:07',NULL,NULL,NULL),(28,'TP7-012','test summary','test descriptions','TP7','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-04-30 19:58:05','2025-04-30 19:58:05',NULL,NULL,NULL),(31,'TP(-001','dfdsf','asdfsfd','TP(','sdfsd','dsfdsf','resolved','bug','2025-04-30 20:05:48','2025-05-01 10:08:35',NULL,'2025-04-30 20:06:19','2025-04-30 20:16:16'),(32,'TP(-002','test summary','test descriptions','TP(','john.doe@example.com','jane.doe@example.com','in_progress','bug','2025-05-01 10:34:02','2025-05-01 10:34:02',NULL,NULL,NULL),(33,'TP(-003','test summary','test descriptions','TP(','john.doe@example.com','jane.doe@example.com','resolved','bug','2025-05-01 10:34:34','2025-05-01 10:35:00',NULL,'2025-05-01 10:34:46','2025-05-01 10:35:00');
 /*!40000 ALTER TABLE `issues` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -79,7 +82,7 @@ CREATE TABLE `project_assignments` (
 
 LOCK TABLES `project_assignments` WRITE;
 /*!40000 ALTER TABLE `project_assignments` DISABLE KEYS */;
-INSERT INTO `project_assignments` VALUES (1,1,'member','2025-04-28 20:20:31'),(1,2,'member','2025-04-29 11:37:58'),(1,3,'developer','2025-04-29 12:04:06'),(2,1,'member','2025-04-29 11:58:14'),(2,2,'member','2025-04-29 11:40:45'),(2,3,'member','2025-04-29 12:05:58');
+INSERT INTO `project_assignments` VALUES (1,1,'member','2025-04-28 20:20:31'),(1,2,'member','2025-04-29 11:37:58'),(1,3,'developer','2025-04-29 12:04:06'),(2,1,'member','2025-04-29 11:58:14'),(2,2,'member','2025-04-29 11:40:45'),(2,3,'member','2025-04-29 12:05:58'),(4,2,'scrum_master','2025-04-30 20:58:20');
 /*!40000 ALTER TABLE `project_assignments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -99,7 +102,7 @@ CREATE TABLE `project_scope` (
   KEY `scope_id` (`scope_id`),
   CONSTRAINT `project_scope_ibfk_1` FOREIGN KEY (`project_key`) REFERENCES `projects` (`project_key`) ON DELETE CASCADE,
   CONSTRAINT `project_scope_ibfk_2` FOREIGN KEY (`scope_id`) REFERENCES `scopes` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -108,7 +111,7 @@ CREATE TABLE `project_scope` (
 
 LOCK TABLES `project_scope` WRITE;
 /*!40000 ALTER TABLE `project_scope` DISABLE KEYS */;
-INSERT INTO `project_scope` VALUES (5,'TP8',6),(6,'TP7',7),(7,'TP7',8);
+INSERT INTO `project_scope` VALUES (5,'TP8',6),(6,'TP7',7),(7,'TP7',8),(12,'TP(',6);
 /*!40000 ALTER TABLE `project_scope` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -132,7 +135,7 @@ CREATE TABLE `projects` (
   UNIQUE KEY `project_key` (`project_key`),
   KEY `project_lead` (`project_lead`),
   CONSTRAINT `projects_ibfk_1` FOREIGN KEY (`project_lead`) REFERENCES `users` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -141,7 +144,7 @@ CREATE TABLE `projects` (
 
 LOCK TABLES `projects` WRITE;
 /*!40000 ALTER TABLE `projects` DISABLE KEYS */;
-INSERT INTO `projects` VALUES (1,'TP7','Test Project 7','Test project description',1,11,'2025-03-28 13:16:21',0),(2,'TP8','Test Project 7','Test project description',1,1,'2025-04-15 16:23:11',2);
+INSERT INTO `projects` VALUES (1,'TP7','Test Project 7','Test project description',1,12,'2025-03-28 13:16:21',0),(2,'TP8','Test Project 7','Test project description',1,1,'2025-04-15 16:23:11',2),(4,'TP(','ese','df',1,3,'2025-04-30 20:04:17',10);
 /*!40000 ALTER TABLE `projects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -271,7 +274,7 @@ CREATE TABLE `standups` (
   PRIMARY KEY (`id`),
   KEY `project_key` (`project_key`),
   CONSTRAINT `standups_ibfk_1` FOREIGN KEY (`project_key`) REFERENCES `projects` (`project_key`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -280,7 +283,7 @@ CREATE TABLE `standups` (
 
 LOCK TABLES `standups` WRITE;
 /*!40000 ALTER TABLE `standups` DISABLE KEYS */;
-INSERT INTO `standups` VALUES (1,'TP8','2025-04-15 16:23:22',NULL,'2025-04-15 16:23:22'),(2,'TP7','2025-04-27 15:47:16','2025-04-27 16:09:27','2025-04-27 15:47:16'),(3,'TP7','2025-04-27 18:03:39',NULL,'2025-04-27 18:03:39'),(4,'TP7','2025-04-27 18:03:44','2025-04-27 18:04:08','2025-04-27 18:03:44'),(5,'TP7','2025-04-27 18:04:12',NULL,'2025-04-27 18:04:12'),(6,'TP7','2025-04-27 18:15:45',NULL,'2025-04-27 18:15:45'),(7,'TP7','2025-04-27 18:20:47',NULL,'2025-04-27 18:20:47'),(8,'TP7','2025-04-27 18:24:06',NULL,'2025-04-27 18:24:06'),(9,'TP7','2025-04-28 10:36:41',NULL,'2025-04-28 10:36:41'),(10,'TP7','2025-04-28 10:40:21','2025-04-28 10:44:24','2025-04-28 10:40:21'),(11,'TP7','2025-04-28 10:55:20','2025-04-28 10:55:47','2025-04-28 10:55:20'),(14,'TP7','2025-04-28 10:59:27','2025-04-28 10:59:30','2025-04-28 10:59:27'),(15,'TP7','2025-04-28 10:59:46','2025-04-28 10:59:49','2025-04-28 10:59:46'),(16,'TP7','2025-04-28 13:42:49','2025-04-28 13:43:29','2025-04-28 13:42:49'),(17,'TP7','2025-04-28 13:57:46','2025-04-28 13:58:27','2025-04-28 13:57:46'),(18,'TP7','2025-04-28 14:02:31','2025-04-28 14:02:55','2025-04-28 14:02:31'),(19,'TP7','2025-04-28 14:03:02',NULL,'2025-04-28 14:03:02'),(20,'TP7','2025-04-28 14:03:35',NULL,'2025-04-28 14:03:35');
+INSERT INTO `standups` VALUES (1,'TP8','2025-04-15 16:23:22',NULL,'2025-04-15 16:23:22'),(2,'TP7','2025-04-27 15:47:16','2025-04-27 16:09:27','2025-04-27 15:47:16'),(3,'TP7','2025-04-27 18:03:39',NULL,'2025-04-27 18:03:39'),(4,'TP7','2025-04-27 18:03:44','2025-04-27 18:04:08','2025-04-27 18:03:44'),(5,'TP7','2025-04-27 18:04:12',NULL,'2025-04-27 18:04:12'),(6,'TP7','2025-04-27 18:15:45',NULL,'2025-04-27 18:15:45'),(7,'TP7','2025-04-27 18:20:47',NULL,'2025-04-27 18:20:47'),(8,'TP7','2025-04-27 18:24:06',NULL,'2025-04-27 18:24:06'),(9,'TP7','2025-04-28 10:36:41',NULL,'2025-04-28 10:36:41'),(10,'TP7','2025-04-28 10:40:21','2025-04-28 10:44:24','2025-04-28 10:40:21'),(11,'TP7','2025-04-28 10:55:20','2025-04-28 10:55:47','2025-04-28 10:55:20'),(14,'TP7','2025-04-28 10:59:27','2025-04-28 10:59:30','2025-04-28 10:59:27'),(15,'TP7','2025-04-28 10:59:46','2025-04-28 10:59:49','2025-04-28 10:59:46'),(16,'TP7','2025-04-28 13:42:49','2025-04-28 13:43:29','2025-04-28 13:42:49'),(17,'TP7','2025-04-28 13:57:46','2025-04-28 13:58:27','2025-04-28 13:57:46'),(18,'TP7','2025-04-28 14:02:31','2025-04-28 14:02:55','2025-04-28 14:02:31'),(19,'TP7','2025-04-28 14:03:02',NULL,'2025-04-28 14:03:02'),(20,'TP7','2025-04-28 14:03:35',NULL,'2025-04-28 14:03:35'),(22,'TP7','2025-04-30 19:23:20','2025-04-30 19:23:23','2025-04-30 19:23:20');
 /*!40000 ALTER TABLE `standups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -322,4 +325,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-30 19:15:18
+-- Dump completed on 2025-05-07 21:40:24
